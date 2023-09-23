@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace UnfinishedBusinessman.StereoGame
+namespace StereoGame
 {
 	public class SpritedEntity : Entity
 	{
@@ -52,11 +52,11 @@ namespace UnfinishedBusinessman.StereoGame
 		}
 
 		public SpritedEntity(Vector2 startingCoords, Texture2D _sprite, SpriteAnchor _spriteAnchor):
-			this(startingCoords, _sprite, _spriteAnchor, GameConstants.activeDepth)
+			this(startingCoords, _sprite, _spriteAnchor, CollisionEntity.ActiveDepth)
 		{ }
 
 		public SpritedEntity(Vector2 startingCoords, Texture2D _sprite) :
-			this(startingCoords, _sprite, SpriteAnchor.Center, GameConstants.activeDepth)
+			this(startingCoords, _sprite, SpriteAnchor.Center, CollisionEntity.ActiveDepth)
 		{ }
 
 		public SpritedEntity(Vector2 startingCoords):

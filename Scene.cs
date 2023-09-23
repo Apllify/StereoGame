@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnfinishedBusinessman.StereoGame
+namespace StereoGame
 {
 	public class Scene : Entity
 	{
@@ -213,7 +213,7 @@ namespace UnfinishedBusinessman.StereoGame
 			e1MoveIntensity = (1 / e1.CollisionWeight) * normalConstant;
 			e2MoveIntensity = (1 / e2.CollisionWeight) * normalConstant;
 
-			for (int counter = 0; counter < safeDistance; counter += GameConstants.collisionPixelPrecision)
+			for (int counter = 0; counter < safeDistance; counter += CollisionEntity.CollisionPixelPrecision)
 			{
 				//shift both entities accordingly
 				e1.ShiftPosition(-collisionVector * (float)e1MoveIntensity);

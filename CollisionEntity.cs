@@ -7,10 +7,16 @@ using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace UnfinishedBusinessman.StereoGame
+namespace StereoGame
 {
 	public class CollisionEntity : SpritedEntity
 	{
+
+		public const float ActiveDepth = 0.5f;
+		public const float BackgroundDepth = 0.2f;
+		public const float ForegroundDepth = 1f;
+
+		public const int CollisionPixelPrecision = 1;
 
 		protected RectangleEntity hitbox;
 
@@ -50,11 +56,11 @@ namespace UnfinishedBusinessman.StereoGame
 		{ }
 
 		public CollisionEntity(Vector2 position, RectangleEntity _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor):
-			this(position, _hitbox, _sprite, _spriteAnchor, GameConstants.activeDepth)
+			this(position, _hitbox, _sprite, _spriteAnchor, CollisionEntity.ActiveDepth)
 		{ }
 
 		public CollisionEntity(float x, float y, RectangleEntity _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor) :
-			this(new Vector2(x, y), _hitbox, _sprite, _spriteAnchor, GameConstants.activeDepth)
+			this(new Vector2(x, y), _hitbox, _sprite, _spriteAnchor, CollisionEntity.ActiveDepth)
 		{ }
 
 
