@@ -24,7 +24,8 @@ namespace StereoGame
 		private List<SpritedEntity> attachedEntities;
 
 		//Keep track of the position from the last frame
-		Vector2 oldPosition;
+		protected Vector2 oldPosition;
+		protected Vector2 lastFrameMovement;
 
 
 
@@ -98,6 +99,16 @@ namespace StereoGame
 			return hitbox;
 		}
 
+		public Vector2 GetLastPosition()
+		{
+			return oldPosition;
+		}
+
+		public Vector2 GetLastFrameMovement()
+		{
+			return lastFrameMovement;
+		}
+
 		protected void ShiftChildrenPositions(float shiftX, float shiftY)
 		{
 			foreach (SpritedEntity e in attachedEntities)
@@ -109,11 +120,12 @@ namespace StereoGame
 
 		protected sealed override void PreUpdate(GameTime gameTime)
 		{
+			oldPosition = GetPosition();
 		}
 
 		protected sealed override void PostUpdate(GameTime gameTime)
 		{
-
+			lastFrameMovement = GetPosition() - oldPosition;
 		}
 
 

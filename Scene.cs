@@ -181,7 +181,7 @@ namespace StereoGame
 				return;
 			}
 
-			//FIGURE OUT BETTER OPTION : don't care when two elements are perfectly superposed 
+			//for now, don't care when two elements are perfectly superposed 
 			if (e1.GetPosition().EqualsWithTolerence(e2.GetPosition(), 1E-02f))
 			{
 				return;
@@ -190,17 +190,23 @@ namespace StereoGame
 
 			//TODO : optimization once i find a better algorithm
 
-			//computing the vector between the two entities
-			collisionVector = e2.GetHitbox().GetCenter()- e1.GetHitbox().GetCenter();
+
+
+			//IF YOU'RE READING THIS, the way to approach this i think should be : 
+			// - slide both objects along the component of their displacement vector that is orthogonal
+			// to the vector connecting the two objects 
+			// - if that vector is 0, then just resort to the vector connecting the two.
+
+
+			//computing the straightest vector to leave the collision point
+			collisionVector = e1.GetPosition() - e2.GetPosition();
 			collisionVector.Normalize();
 
-			//making the vector orthogonal if it only deviates slightly (QoL)
-			if (collisionVector.ToAngle() % (Math.PI / 2) <= (Math.PI / 6))
-			{
 
-			}
+			
 
 
+			//compute the distance at which we're guaranteed not to have a collision
 			e1HalfDiag = e1.GetHitbox().GetDimensions().Length() / 2;
 			e2HalfDiag = e2.GetHitbox().GetDimensions().Length() / 2;
 			safeDistance = e1HalfDiag + e2HalfDiag;
@@ -216,8 +222,8 @@ namespace StereoGame
 			for (int counter = 0; counter < safeDistance; counter += CollisionEntity.CollisionPixelPrecision)
 			{
 				//shift both entities accordingly
-				e1.ShiftPosition(-collisionVector * (float)e1MoveIntensity);
-				e2.ShiftPosition(collisionVector * (float)e2MoveIntensity);
+				e1.ShiftPosition(collisionVector * (float)e1MoveIntensity);
+				e2.ShiftPosition(-collisionVector * (float)e2MoveIntensity);
 
 
 				//leave if collision is finally gone
