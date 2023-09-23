@@ -122,15 +122,10 @@ namespace StereoGame
 		}
 
 
-		/// <summary>
-		/// After custom update : update all of the entities, correct and notify entities of collisions 
-		/// </summary>
-		/// <param name="gameTime">You know what GameTime is already</param>
-		protected sealed override void PostUpdate(GameTime gameTime)
+		private void UpdateAllEntities(GameTime gameTime)
 		{
-
 			//updating all entities
-			foreach(Entity entity in regularEntitiesList)
+			foreach (Entity entity in regularEntitiesList)
 			{
 				//adapt the time scale for each entity ?
 				//(probably figure out something better here imo)
@@ -144,10 +139,29 @@ namespace StereoGame
 				}
 			}
 
-			foreach(Entity collisionEntity in collisionEntitiesList)
+			foreach (Entity collisionEntity in collisionEntitiesList)
 			{
-				collisionEntity.Update(gameTime);
+				if (collisionEntity.TimeScale == 1f)
+				{
+					collisionEntity.Update(gameTime);
+				}
+				else
+				{
+					collisionEntity.Update(new GameTime(gameTime.TotalGameTime, gameTime.ElapsedGameTime * collisionEntity.TimeScale));
+				}
 			}
+		}
+
+
+		/// <summary>
+		/// After custom update : update all of the entities, correct and notify entities of collisions 
+		/// </summary>
+		/// <param name="gameTime">You know what GameTime is already</param>
+		protected sealed override void PostUpdate(GameTime gameTime)
+		{
+
+			//updating scene entities
+			UpdateAllEntities(gameTime);
 
 
 			//detecting then correcting collisions
@@ -162,7 +176,7 @@ namespace StereoGame
 					e2 = collisionEntitiesList[j];
 					
 
-					if (e1.GetHitbox().Intersects(e2.GetHitbox()))
+					if (e1.GetHitbox().VisuallyIntersects(e2.GetHitbox()))
 					{
 
 						//call the respective events
@@ -175,6 +189,11 @@ namespace StereoGame
 					}
 				}
 			}
+
+
+
+
+
 		}
 
 		private void SolveCollision(CollisionEntity e1, CollisionEntity e2)
@@ -246,7 +265,7 @@ namespace StereoGame
 			e1MoveIntensity = (1 / e1.CollisionWeight) * normalConstant;
 			e2MoveIntensity = (1 / e2.CollisionWeight) * normalConstant;
 
-			for (int counter = 0; counter < safeDistance; counter += CollisionEntity.CollisionPixelPrecision)
+			for (float counter = 0; counter < safeDistance; counter += CollisionEntity.CollisionPixelPrecision)
 			{
 				//shift both entities accordingly
 				e1.ShiftPosition(e1MoveAway * (float)e1MoveIntensity);
@@ -254,7 +273,7 @@ namespace StereoGame
 
 
 				//leave if collision is finally gone
-				if (!e1.GetHitbox().Intersects(e2.GetHitbox()))
+				if (!e1.GetHitbox().VisuallyIntersects(e2.GetHitbox()))
 				{
 					return;
 				}

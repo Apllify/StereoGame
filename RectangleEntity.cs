@@ -71,7 +71,12 @@ namespace StereoGame
 			return topLeftPosition + new Vector2(width / 2, height / 2);
 		}
 
-		//simple AABB collision checking
+		/// <summary>
+		/// CAREFUL if using this, ALL normal collision events should use VisuallyIntersects()
+		/// instead of Intersects()
+		/// </summary>
+		/// <param name="otherRec"></param>
+		/// <returns></returns>
 		public bool Intersects(RectangleEntity otherRec)
 		{
 			Vector2 otherTopLeft = otherRec.GetTopLeftPosition();
@@ -83,6 +88,19 @@ namespace StereoGame
 					(topLeftPosition.Y < (otherTopLeft.Y + otherHeight)) &&
 					((topLeftPosition.Y + height) > otherTopLeft.Y);
 
+		}
+
+		//AABB collision check BUT i use the on-screen discrete coordinates 
+		public bool VisuallyIntersects(RectangleEntity otherRec)
+		{
+			Vector2 otherTopLeft = otherRec.GetTopLeftPosition();
+			float otherWidth = otherRec.GetWidth();
+			float otherHeight = otherRec.GetHeight();
+
+			return (Math.Round(topLeftPosition.X) < Math.Round(otherTopLeft.X + otherWidth)) &&
+					(Math.Round(topLeftPosition.X + width) > Math.Round(otherTopLeft.X)) &&
+					(Math.Round(topLeftPosition.Y) < Math.Round(otherTopLeft.Y + otherHeight)) &&
+					(Math.Round(topLeftPosition.Y + height) > Math.Round(otherTopLeft.Y));
 		}
 
 		public Rectangle ToRectangle()

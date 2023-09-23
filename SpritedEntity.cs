@@ -137,6 +137,9 @@ namespace StereoGame
 			//determine how to draw the sprite based on the anchor
 			Vector2 topLeftPos = SpritedEntity.GetTopLeftPos(drawPosition, new Vector2(sprite.Width, sprite.Height), spriteAnchor);
 
+			//make sure to manually round the coordinates (just in case)
+			topLeftPos.X = (int)Math.Round(topLeftPos.X);
+			topLeftPos.Y = (int)Math.Round(topLeftPos.Y);
 
 			spriteBatch.Draw(sprite, topLeftPos, null, colorMask, 0, Vector2.Zero, 1, SpriteEffects.None, layerDepth);
 		}

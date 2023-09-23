@@ -16,7 +16,7 @@ namespace StereoGame
 		public const float BackgroundDepth = 0.2f;
 		public const float ForegroundDepth = 1f;
 
-		public const int CollisionPixelPrecision = 1;
+		public const float CollisionPixelPrecision = 0.3f;
 
 		protected RectangleEntity hitbox;
 
