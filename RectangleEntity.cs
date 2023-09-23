@@ -24,24 +24,7 @@ namespace StereoGame
 			height = _height;
 
 			//set the coordinates of the top left point
-			if (rectangleAnchor == SpriteAnchor.TopLeft)
-			{
-				topLeftPosition = GetPosition();
-			}
-			else if (rectangleAnchor == SpriteAnchor.TopRight)
-			{
-				topLeftPosition.X = x - width;
-				topLeftPosition.Y = y;
-			}
-			else if (rectangleAnchor == SpriteAnchor.Center)
-			{
-				topLeftPosition.X = x - (width / 2);
-				topLeftPosition.Y = y - (height / 2);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
+			topLeftPosition = SpritedEntity.GetTopLeftPos(new Vector2(x, y), new Vector2(width, height), rectangleAnchor);
 		}
 
 		public RectangleEntity(float x, float y, float _width, float _height):

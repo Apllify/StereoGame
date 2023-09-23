@@ -28,6 +28,9 @@ namespace StereoGame
 		private double normalConstant;
 
 		private Vector2 collisionVector;
+		private Vector2 e1MoveAway;
+		private Vector2 e2MoveAway;
+
 		private float newCollisionAngle;
 		private float e1HalfDiag;
 		private float e2HalfDiag;
@@ -118,6 +121,7 @@ namespace StereoGame
 			
 		}
 
+
 		/// <summary>
 		/// After custom update : update all of the entities, correct and notify entities of collisions 
 		/// </summary>
@@ -202,8 +206,31 @@ namespace StereoGame
 			collisionVector = e1.GetPosition() - e2.GetPosition();
 			collisionVector.Normalize();
 
+			//TODO : fix this
+			//e1MoveAway = e1.GetLastFrameMovement().ProjectOnto(collisionVector);
+			//if (e1MoveAway.Equals(Vector2.Zero))
+			//{
+			//	e1MoveAway = collisionVector;
+			//}
+			//else
+			//{
+			//	e1MoveAway.Normalize();
+			//}
 
-			
+			//e2MoveAway = -e2.GetLastFrameMovement().ProjectOnto(collisionVector);
+			//if (e2MoveAway.Equals(Vector2.Zero))
+			//{
+			//	e2MoveAway = -collisionVector;
+			//}
+			//else
+			//{
+			//	e2MoveAway.Normalize();
+			//}
+
+			e1MoveAway = collisionVector;
+			e2MoveAway = -collisionVector;
+
+
 
 
 			//compute the distance at which we're guaranteed not to have a collision
@@ -222,8 +249,8 @@ namespace StereoGame
 			for (int counter = 0; counter < safeDistance; counter += CollisionEntity.CollisionPixelPrecision)
 			{
 				//shift both entities accordingly
-				e1.ShiftPosition(collisionVector * (float)e1MoveIntensity);
-				e2.ShiftPosition(-collisionVector * (float)e2MoveIntensity);
+				e1.ShiftPosition(e1MoveAway * (float)e1MoveIntensity);
+				e2.ShiftPosition(e2MoveAway * (float)e2MoveIntensity);
 
 
 				//leave if collision is finally gone

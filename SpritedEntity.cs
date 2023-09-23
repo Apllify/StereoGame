@@ -32,6 +32,8 @@ namespace StereoGame
 
 		public float LayerDepth { get; protected set; }
 
+
+
 		public SpritedEntity(Vector2 startingCoords, Texture2D _sprite, SpriteAnchor _spriteAnchor, float _layerDepth)
 		{
 			//properties/fields that have argument values
@@ -63,6 +65,37 @@ namespace StereoGame
 			this(startingCoords, null)
 		{
 
+		}
+
+		/// <summary>
+		/// Takes a position + dimensions of a sprite anchor and 
+		/// return the top left of the anchored object
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="dimensions"></param>
+		/// <param name="spriteAnchor"></param>
+		public static Vector2 GetTopLeftPos(Vector2 position, Vector2 dimensions, SpriteAnchor spriteAnchor)
+		{
+			Vector2 topLeft;
+
+			if (spriteAnchor == SpriteAnchor.Center)
+			{
+				topLeft = position - (dimensions/2);
+			}
+			else if (spriteAnchor == SpriteAnchor.TopRight)
+			{
+				topLeft = position - new Vector2(dimensions.X, 0);
+			}
+			else if (spriteAnchor == SpriteAnchor.TopLeft)
+			{
+				topLeft = new Vector2(0, 0);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+
+			return topLeft;
 		}
 
 		/// <summary>
@@ -102,25 +135,10 @@ namespace StereoGame
 			//TODO : take scale into account when drawing this 
 
 			//determine how to draw the sprite based on the anchor
-			Vector2 origin;
-			float spriteWidth = sprite.Width;
+			Vector2 topLeftPos = SpritedEntity.GetTopLeftPos(drawPosition, new Vector2(sprite.Width, sprite.Height), spriteAnchor);
 
 
-			if (spriteAnchor == SpriteAnchor.Center)
-			{
-				origin = new Vector2(sprite.Width/2, sprite.Height/2);
-			}
-			else if (spriteAnchor == SpriteAnchor.TopRight)
-			{
-				origin = new Vector2(sprite.Width, 0);
-			}
-			else
-			{
-				origin = new Vector2(0, 0);
-			}
-
-
-			spriteBatch.Draw(sprite, drawPosition, null, colorMask, 0, origin, 1, SpriteEffects.None, layerDepth);
+			spriteBatch.Draw(sprite, topLeftPos, null, colorMask, 0, Vector2.Zero, 1, SpriteEffects.None, layerDepth);
 		}
 
 		public static void SpriteDraw(SpriteBatch spriteBatch, Vector2 drawPosition, Texture2D sprite, SpriteAnchor spriteAnchor, float layerDepth)
