@@ -74,7 +74,7 @@ namespace StereoGame
 		/// <param name="position"></param>
 		/// <param name="dimensions"></param>
 		/// <param name="spriteAnchor"></param>
-		public static Vector2 GetTopLeftPos(Vector2 position, Vector2 dimensions, SpriteAnchor spriteAnchor)
+		public static Vector2 GetTopLeftPosFromAnchor(Vector2 position, Vector2 dimensions, SpriteAnchor spriteAnchor)
 		{
 			Vector2 topLeft;
 
@@ -88,7 +88,7 @@ namespace StereoGame
 			}
 			else if (spriteAnchor == SpriteAnchor.TopLeft)
 			{
-				topLeft = new Vector2(0, 0);
+				topLeft = position;
 			}
 			else
 			{
@@ -135,7 +135,7 @@ namespace StereoGame
 			//TODO : take scale into account when drawing this 
 
 			//determine how to draw the sprite based on the anchor
-			Vector2 topLeftPos = SpritedEntity.GetTopLeftPos(drawPosition, new Vector2(sprite.Width, sprite.Height), spriteAnchor);
+			Vector2 topLeftPos = SpritedEntity.GetTopLeftPosFromAnchor(drawPosition, new Vector2(sprite.Width, sprite.Height), spriteAnchor);
 
 			//make sure to manually round the coordinates (just in case)
 			topLeftPos.X = (int)Math.Round(topLeftPos.X);

@@ -16,7 +16,7 @@ namespace StereoGame
 		public const float BackgroundDepth = 0.2f;
 		public const float ForegroundDepth = 1f;
 
-		public const float CollisionPixelPrecision = 0.3f;
+		public const float CollisionPixelPrecision = 0.5f;
 
 		protected RectangleEntity hitbox;
 
@@ -109,6 +109,11 @@ namespace StereoGame
 			return lastFrameMovement;
 		}
 
+		public virtual void OnCollision(CollisionEntity otherEntity)
+		{
+
+		}
+
 		protected void ShiftChildrenPositions(float shiftX, float shiftY)
 		{
 			foreach (SpritedEntity e in attachedEntities)
@@ -128,11 +133,6 @@ namespace StereoGame
 			lastFrameMovement = GetPosition() - oldPosition;
 		}
 
-
-		public virtual void OnCollision(CollisionEntity otherEntity)
-		{
-
-		}
 
 	}
 }

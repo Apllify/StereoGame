@@ -25,7 +25,7 @@ namespace StereoGame
 
         }
 
-        public static Texture2D LoadTexture2D<Texture2D>(string spriteName)
+        public static Texture2D LoadTexture2D(string spriteName)
         {
             Texture2D sprite = contentManager.Load<Texture2D>(spriteName);
             sprite ??= contentManager.Load<Texture2D>(fallbackSprite);

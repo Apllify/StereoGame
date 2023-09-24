@@ -216,68 +216,44 @@ namespace StereoGame
 
 
 			//IF YOU'RE READING THIS, the way to approach this i think should be : 
-			// - slide both objects along the component of their displacement vector that is orthogonal
-			// to the vector connecting the two objects 
-			// - if that vector is 0, then just resort to the vector connecting the two.
+			// compute intersection rectangle of both hitboxes
+			// slide both along the smallest of the two dimensions of that rectangle
+			// should work ?
 
+			var e1Hitbox = e1.GetHitbox();
+			var e2Hitbox = e2.GetHitbox();
 
-			//computing the straightest vector to leave the collision point
-			collisionVector = e1.GetPosition() - e2.GetPosition();
-			collisionVector.Normalize();
-
-			//TODO : fix this
-			//e1MoveAway = e1.GetLastFrameMovement().ProjectOnto(collisionVector);
-			//if (e1MoveAway.Equals(Vector2.Zero))
-			//{
-			//	e1MoveAway = collisionVector;
-			//}
-			//else
-			//{
-			//	e1MoveAway.Normalize();
-			//}
-
-			//e2MoveAway = -e2.GetLastFrameMovement().ProjectOnto(collisionVector);
-			//if (e2MoveAway.Equals(Vector2.Zero))
-			//{
-			//	e2MoveAway = -collisionVector;
-			//}
-			//else
-			//{
-			//	e2MoveAway.Normalize();
-			//}
-
-			e1MoveAway = collisionVector;
-			e2MoveAway = -collisionVector;
-
-
-
-
-			//compute the distance at which we're guaranteed not to have a collision
-			e1HalfDiag = e1.GetHitbox().GetDimensions().Length() / 2;
-			e2HalfDiag = e2.GetHitbox().GetDimensions().Length() / 2;
-			safeDistance = e1HalfDiag + e2HalfDiag;
-
-
-
+			Rectangle collisionRectangle = e1Hitbox.VisualIntersectionRectangle(e2Hitbox);
 
 			//compute which percentage of the displacement each entity will do
 			normalConstant = (1 / e1.CollisionWeight) + (1 / e2.CollisionWeight);
-			e1MoveIntensity = (1 / e1.CollisionWeight) * normalConstant;
-			e2MoveIntensity = (1 / e2.CollisionWeight) * normalConstant;
+			e1MoveIntensity = (1 / e1.CollisionWeight) / normalConstant;
+			e2MoveIntensity = (1 / e2.CollisionWeight) / normalConstant;
 
-			for (float counter = 0; counter < safeDistance; counter += CollisionEntity.CollisionPixelPrecision)
+
+
+
+
+			//displace the entities based on which of the dimensions of intersection is smaller
+			if (collisionRectangle.Width >= collisionRectangle.Height)
 			{
-				//shift both entities accordingly
-				e1.ShiftPosition(e1MoveAway * (float)e1MoveIntensity);
-				e2.ShiftPosition(e2MoveAway * (float)e2MoveIntensity);
+				//displace vertically 
+				int e1Dir = (e1Hitbox.GetTopLeftPosition().Y > e2Hitbox.GetTopLeftPosition().Y) ? 1 : -1;
 
-
-				//leave if collision is finally gone
-				if (!e1.GetHitbox().VisuallyIntersects(e2.GetHitbox()))
-				{
-					return;
-				}
+				e1.ShiftPosition(0, e1Dir * (float)e1MoveIntensity * collisionRectangle.Height);
+				e2.ShiftPosition(0, -e1Dir * (float)e2MoveIntensity * collisionRectangle.Height);
 			}
+			else
+			{
+				//displace horizontally 
+				int e1Dir = (e1Hitbox.GetTopLeftPosition().X > e2Hitbox.GetTopLeftPosition().X) ? 1 : -1;
+
+				e1.ShiftPosition(e1Dir * (float)e1MoveIntensity * collisionRectangle.Width, 0);
+				e2.ShiftPosition(-e1Dir * (float)e2MoveIntensity * collisionRectangle.Width, 0);
+			}
+
+
+
 		}
 
 

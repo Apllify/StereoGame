@@ -10,8 +10,8 @@ namespace StereoGame
 	public class RectangleEntity : SpritedEntity
 	{
 
-		private float width;
-		private float height;
+		public float Width { get; }
+		public float Height { get; }
 
 		//the true coordinates of the top left point no MATTER the rectangle anchor
 		private Vector2 topLeftPosition;
@@ -20,11 +20,11 @@ namespace StereoGame
 		public RectangleEntity(float x, float y, float _width, float _height, SpriteAnchor rectangleAnchor):
 			base(new Vector2(x, y), null, rectangleAnchor){
 			//set the dimensions
-			width = _width;
-			height = _height;
+			Width = _width;
+			Height = _height;
 
 			//set the coordinates of the top left point
-			topLeftPosition = SpritedEntity.GetTopLeftPos(new Vector2(x, y), new Vector2(width, height), rectangleAnchor);
+			topLeftPosition = SpritedEntity.GetTopLeftPosFromAnchor(new Vector2(x, y), new Vector2(Width, Height), rectangleAnchor);
 		}
 
 		public RectangleEntity(float x, float y, float _width, float _height):
@@ -43,7 +43,7 @@ namespace StereoGame
 
 		public RectangleEntity ShiftPositionClone(float shiftX, float shiftY)
 		{
-			return new RectangleEntity(GetPosition().X + shiftX, GetPosition().Y + shiftY, width, height, spriteAnchor);
+			return new RectangleEntity(topLeftPosition.X + shiftX, topLeftPosition.Y + shiftY, Width, Height, SpriteAnchor.TopLeft);
 		}
 
 		public Vector2 GetTopLeftPosition()
@@ -51,24 +51,14 @@ namespace StereoGame
 			return topLeftPosition;
 		}
 
-		public float GetWidth()
-		{
-			return width;
-		}
-
-		public float GetHeight()
-		{
-			return height;
-		}
-
 		public Vector2 GetDimensions()
 		{
-			return new Vector2(width, height);
+			return new Vector2(Width, Height);
 		}
 
-		public Vector2 GetCenter()
+		public Vector2 GetCenterPosition()
 		{
-			return topLeftPosition + new Vector2(width / 2, height / 2);
+			return topLeftPosition + new Vector2(Width / 2, Height/ 2);
 		}
 
 		/// <summary>
@@ -80,34 +70,33 @@ namespace StereoGame
 		public bool Intersects(RectangleEntity otherRec)
 		{
 			Vector2 otherTopLeft = otherRec.GetTopLeftPosition();
-			float otherWidth = otherRec.GetWidth();
-			float otherHeight = otherRec.GetHeight();
+			float otherWidth = otherRec.Width;
+			float otherHeight = otherRec.Height;
 
 			return (topLeftPosition.X < (otherTopLeft.X + otherWidth)) &&
-					((topLeftPosition.X + width) > otherTopLeft.X) &&
+					((topLeftPosition.X + Width) > otherTopLeft.X) &&
 					(topLeftPosition.Y < (otherTopLeft.Y + otherHeight)) &&
-					((topLeftPosition.Y + height) > otherTopLeft.Y);
+					((topLeftPosition.Y + Height) > otherTopLeft.Y);
 
 		}
 
 		//AABB collision check BUT i use the on-screen discrete coordinates 
 		public bool VisuallyIntersects(RectangleEntity otherRec)
 		{
-			Vector2 otherTopLeft = otherRec.GetTopLeftPosition();
-			float otherWidth = otherRec.GetWidth();
-			float otherHeight = otherRec.GetHeight();
-
-			return (Math.Round(topLeftPosition.X) < Math.Round(otherTopLeft.X + otherWidth)) &&
-					(Math.Round(topLeftPosition.X + width) > Math.Round(otherTopLeft.X)) &&
-					(Math.Round(topLeftPosition.Y) < Math.Round(otherTopLeft.Y + otherHeight)) &&
-					(Math.Round(topLeftPosition.Y + height) > Math.Round(otherTopLeft.Y));
+			return ToRectangle().Intersects(otherRec.ToRectangle());
 		}
 
 		public Rectangle ToRectangle()
 		{
-			return new Rectangle((int)topLeftPosition.X, (int)topLeftPosition.Y, (int)width, (int)height);
+			return new Rectangle((int)Math.Round(topLeftPosition.X), (int)Math.Round(topLeftPosition.Y), 
+								 (int)Math.Round(Width), (int)Math.Round(Height));
 		}
 
+
+		public Rectangle VisualIntersectionRectangle(RectangleEntity other)
+		{
+			return Rectangle.Intersect(ToRectangle(), other.ToRectangle());
+		}
 
 
 	}
