@@ -11,12 +11,16 @@ namespace StereoGame
 {
     public class SpriteLoader
     {
+        public static bool isInitialized = false; 
         public static ContentManager contentManager;
         public const string fallbackSprite = "Box";
 
         public static void InitializeSpriteLoader(ContentManager _contentManager)
         {
+            //save the content manager that allows us to load sprites
             contentManager = _contentManager;
+
+            isInitialized = true;
         }
 
         public static T LoadContent<T>(string textureName)

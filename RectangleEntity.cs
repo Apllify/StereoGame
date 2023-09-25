@@ -19,6 +19,7 @@ namespace StereoGame
 
 		public RectangleEntity(float x, float y, float _width, float _height, SpriteAnchor rectangleAnchor):
 			base(new Vector2(x, y), null, rectangleAnchor){
+
 			//set the dimensions
 			Width = _width;
 			Height = _height;

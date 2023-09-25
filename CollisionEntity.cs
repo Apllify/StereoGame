@@ -12,11 +12,8 @@ namespace StereoGame
 	public class CollisionEntity : SpritedEntity
 	{
 
-		public const float ActiveDepth = 0.5f;
-		public const float BackgroundDepth = 0.2f;
-		public const float ForegroundDepth = 1f;
 
-		public const float CollisionPixelPrecision = 0.5f;
+
 
 		protected RectangleEntity hitbox;
 
@@ -32,7 +29,8 @@ namespace StereoGame
 		/// <summary>
 		/// Don't make this zero under ANY circumstances.
 		/// </summary>
-		public double CollisionWeight { get; set; }
+		public float CollisionWeight { get; set; }
+
 
 		public CollisionEntity(Vector2 position, RectangleEntity _hitbox,  Texture2D _sprite, SpriteAnchor _spriteAnchor, float _layerDepth):
 			base(position, _sprite, _spriteAnchor, _layerDepth)
@@ -57,11 +55,11 @@ namespace StereoGame
 		{ }
 
 		public CollisionEntity(Vector2 position, RectangleEntity _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor):
-			this(position, _hitbox, _sprite, _spriteAnchor, CollisionEntity.ActiveDepth)
+			this(position, _hitbox, _sprite, _spriteAnchor, SpritedEntity.ActiveDepth)
 		{ }
 
 		public CollisionEntity(float x, float y, RectangleEntity _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor) :
-			this(new Vector2(x, y), _hitbox, _sprite, _spriteAnchor, CollisionEntity.ActiveDepth)
+			this(new Vector2(x, y), _hitbox, _sprite, _spriteAnchor, SpritedEntity.ActiveDepth)
 		{ }
 
 

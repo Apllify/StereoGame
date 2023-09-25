@@ -19,23 +19,7 @@ namespace StereoGame
 		private List<CollisionEntity> collisionEntitiesList;
 
 
-		//variables for collision handling
-		private CollisionEntity e1;
-		private CollisionEntity e2;
 
-		private double e1MoveIntensity;
-		private double e2MoveIntensity;
-		private double normalConstant;
-
-		private Vector2 collisionVector;
-		private Vector2 e1MoveAway;
-		private Vector2 e2MoveAway;
-
-		private float newCollisionAngle;
-		private float e1HalfDiag;
-		private float e2HalfDiag;
-		private float safeDistance;
-		
 
 
 
@@ -169,11 +153,11 @@ namespace StereoGame
 			for (int i = 0; i < collisionEntitiesList.Count-1; i++)
 			{
 
-				e1 = collisionEntitiesList[i];
+				CollisionEntity e1 = collisionEntitiesList[i];
 
 				for (int j = i+1; j< collisionEntitiesList.Count; j++)
 				{
-					e2 = collisionEntitiesList[j];
+					CollisionEntity e2 = collisionEntitiesList[j];
 					
 
 					if (e1.GetHitbox().VisuallyIntersects(e2.GetHitbox()))
@@ -211,24 +195,15 @@ namespace StereoGame
 			}
 
 
-			//TODO : optimization once i find a better algorithm
-
-
-
-			//IF YOU'RE READING THIS, the way to approach this i think should be : 
-			// compute intersection rectangle of both hitboxes
-			// slide both along the smallest of the two dimensions of that rectangle
-			// should work ?
-
-			var e1Hitbox = e1.GetHitbox();
-			var e2Hitbox = e2.GetHitbox();
+			RectangleEntity e1Hitbox = e1.GetHitbox();
+			RectangleEntity e2Hitbox = e2.GetHitbox();
 
 			Rectangle collisionRectangle = e1Hitbox.VisualIntersectionRectangle(e2Hitbox);
 
 			//compute which percentage of the displacement each entity will do
-			normalConstant = (1 / e1.CollisionWeight) + (1 / e2.CollisionWeight);
-			e1MoveIntensity = (1 / e1.CollisionWeight) / normalConstant;
-			e2MoveIntensity = (1 / e2.CollisionWeight) / normalConstant;
+			float normalConstant = (1 / e1.CollisionWeight) + (1 / e2.CollisionWeight);
+			float e1MoveIntensity = (1 / e1.CollisionWeight) / normalConstant;
+			float e2MoveIntensity = (1 / e2.CollisionWeight) / normalConstant;
 
 
 

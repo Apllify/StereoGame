@@ -13,7 +13,15 @@ namespace StereoGame
 {
 	public class SpritedEntity : Entity
 	{
+		//class members
+		public static Texture2D WhiteRectangle;
 
+		public const float ActiveDepth = 0.5f;
+		public const float BackgroundDepth = 0.2f;
+		public const float ForegroundDepth = 1f;
+
+
+		//instance members
 		private Vector2 position;
 
 		protected Texture2D sprite;
@@ -129,6 +137,34 @@ namespace StereoGame
 		}
 
 
+		public static void RectangleDraw(SpriteBatch spriteBatch, Vector2 topLeft, Vector2 dimensions, Color color, float layerDepth)
+		{
+			//make sure the singular rectangle texture has already been created
+			if (SpritedEntity.WhiteRectangle == null)
+			{
+				SpritedEntity.WhiteRectangle = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+				SpritedEntity.WhiteRectangle.SetData(new[] { Color.White });
+			}	
+
+			spriteBatch.Draw(SpritedEntity.WhiteRectangle, topLeft, null,
+				color, 0f, Vector2.Zero, dimensions,
+				SpriteEffects.None, layerDepth);
+		}
+
+		public static void RectangleDraw(SpriteBatch spriteBatch, Vector2 topLeft, Vector2 dimensions, Color color)
+		{
+			RectangleDraw(spriteBatch, topLeft, dimensions, color, SpritedEntity.ActiveDepth);
+		}
+
+		public static void RectangleDraw(SpriteBatch spriteBatch, Rectangle location, Color color, float layerDepth)
+		{
+			RectangleDraw(spriteBatch, new Vector2(location.X, location.Y), location.Size.ToVector2(), color, layerDepth);
+		}
+
+		public static void RectangleDraw(SpriteBatch spriteBatch, Rectangle location, Color color)
+		{
+			RectangleDraw(spriteBatch, new Vector2(location.X, location.Y), location.Size.ToVector2(), color, SpritedEntity.ActiveDepth);
+		}
 
 		public static void SpriteDraw(SpriteBatch spriteBatch, Vector2 drawPosition, Texture2D sprite, SpriteAnchor spriteAnchor, float layerDepth, Color colorMask, float scale)
 		{
