@@ -10,10 +10,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnfinishedBusinessman.StereoGame.Hitbox;
 
 namespace StereoGame
 {
-	public class Scene : Entity
+    public class Scene : Entity
 	{
 		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
