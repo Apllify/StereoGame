@@ -16,10 +16,9 @@ namespace StereoGame
 
 
 
-		protected RectangleEntity hitbox;
-
 		//List of entities attached to this one AKA their positions are locked relative to this
 		private List<SpritedEntity> attachedEntities;
+		protected IHitbox hitbox;
 
 		//Keep track of the position from the last frame
 		protected Vector2 oldPosition;
@@ -33,7 +32,7 @@ namespace StereoGame
 		public float CollisionWeight { get; set; }
 
 
-		public CollisionEntity(Vector2 position, RectangleEntity _hitbox,  Texture2D _sprite, SpriteAnchor _spriteAnchor, float _layerDepth):
+		public CollisionEntity(Vector2 position, IHitbox _hitbox,  Texture2D _sprite, SpriteAnchor _spriteAnchor, float _layerDepth):
 			base(position, _sprite, _spriteAnchor, _layerDepth)
 		{
 			//stuff common to all entity subclasses
@@ -51,15 +50,15 @@ namespace StereoGame
 
 		}
 		
-		public CollisionEntity(float x, float y, RectangleEntity _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor, float _layerDepth):
+		public CollisionEntity(float x, float y, IHitbox _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor, float _layerDepth):
 			this(new Vector2(x,y), _hitbox, _sprite, _spriteAnchor, _layerDepth)
 		{ }
 
-		public CollisionEntity(Vector2 position, RectangleEntity _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor):
+		public CollisionEntity(Vector2 position, IHitbox _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor):
 			this(position, _hitbox, _sprite, _spriteAnchor, SpritedEntity.ActiveDepth)
 		{ }
 
-		public CollisionEntity(float x, float y, RectangleEntity _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor) :
+		public CollisionEntity(float x, float y, IHitbox _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor) :
 			this(new Vector2(x, y), _hitbox, _sprite, _spriteAnchor, SpritedEntity.ActiveDepth)
 		{ }
 
@@ -69,23 +68,17 @@ namespace StereoGame
 			//normal position change + moving children
 			base.ShiftPosition(shiftX, shiftY);
 
+			//move our children + hitbox(es)
 			ShiftChildrenPositions(shiftX, shiftY);
+			hitbox.Shift(shiftX, shiftY);
 		}
+		
 
 
-
-		public void SetHitbox(RectangleEntity _hitbox)
+		public void SetHitbox(IHitbox _hitbox)
 		{
-			//remove older hitbox if necessary
-			if (hitbox != null)
-			{
-				attachedEntities.Remove(hitbox);
-			}
-
-
 			//set hitbox and add it to the list of attached entities
 			hitbox = _hitbox;
-			attachedEntities.Add(hitbox);
 		}
 
 		/// <summary>
@@ -93,7 +86,7 @@ namespace StereoGame
 		/// Supports the available spriteAnchors
 		/// </summary>
 		/// <returns>The bounds of the entity sprite</returns>
-		public RectangleEntity GetHitbox()
+		public IHitbox GetHitbox()
 		{
 			return hitbox;
 		}

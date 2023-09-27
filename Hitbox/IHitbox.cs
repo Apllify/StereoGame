@@ -1,4 +1,5 @@
-﻿using MonoGame.Extended;
+﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,13 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 		// rectangle.SolveCollision(circle) 
 		public int GetTypeId();
 
-		public void ShiftPosition(float xShift, float yShift);
+		public void Shift(float shiftX, float shiftY);
+		public IHitbox Shifted(float shiftX, float shiftY);
 
 		public bool Intersects(IHitbox other);
 
 		public RectangleF GetBoundingBox();
 
-		public void SolveCollision(IHitbox other);
+		public Vector2 SolveCollision(IHitbox other, float w1, float w2);
 	}
 }

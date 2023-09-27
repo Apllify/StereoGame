@@ -3,6 +3,7 @@ using MonoGame.Extended;
 using StereoGame;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,9 +42,15 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
             return 0;
         }
 
-        public void ShiftPosition(float shiftX, float shiftY)
+        public void Shift(float shiftX, float shiftY)
         {
             hitboxRectangle.Offset(shiftX, shiftY);
+        }
+
+        public IHitbox Shifted(float shiftX, float shiftY)
+        {
+            return new RectangleHitbox(hitboxRectangle.X + shiftX, hitboxRectangle.Y + shiftY,
+                                        hitboxRectangle.Width, hitboxRectangle.Height);
         }
 
 		public RectangleF GetBoundingBox()
@@ -66,10 +73,71 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 
 
 
-        public void SolveCollision(IHitbox other)
+        public Vector2 SolveCollision(IHitbox other, float w1, float w2)
         {
-            return;
+            if (other is RectangleHitbox)
+            {
+                return SolveBoxCollision((RectangleHitbox) other , w1, w2);
+			}
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="w1">The weight of the entity whose hitbox SolveBoxCollision() is called from.</param>
+        /// <param name="w2">The weight of the entity containing the hitbox passed as argument.</param>
+        private Vector2 SolveBoxCollision(RectangleHitbox other, float w1, float w2)
+        {
+
+			//don't care about collisions between two static objects
+			if (w1.Equals(Double.PositiveInfinity) && w2.Equals(Double.PositiveInfinity))
+			{
+				return;
+			}
+
+            //for now, don't care when an element is inside another
+            RectangleF intersectionRec = GetBoundingBox().Intersection(other.GetBoundingBox());
+
+			if (intersectionRec == GetBoundingBox() ||
+                intersectionRec == other.GetBoundingBox()) 
+			{
+				return Vector2.Zero;
+			}
+
+
+			//compute which percentage of the displacement each entity will do
+			float normalConstant = (1 / w1) + (1 / w2);
+			float e1MoveIntensity = (1 / w1) / normalConstant;
+			float e2MoveIntensity = (1 / w2) / normalConstant;
+
+
+
+
+
+			//displace the entities based on which of the dimensions of intersection is smaller
+			if (intersectionRec.Width >= intersectionRec.Height)
+			{
+				//displace vertically 
+				int e1Dir = (GetBoundingBox().TopLeft.Y > other.GetBoundingBox().TopLeft.Y) ? 1 : -1;
+
+				Shift(0, e1Dir * e1MoveIntensity * intersectionRec.Height);
+				other.Shift(0, -e1Dir * e2MoveIntensity * intersectionRec.Height);
+			}
+			else
+			{
+				//displace horizontally 
+				int e1Dir = (GetBoundingBox().TopLeft.X > other.GetBoundingBox().TopLeft.X) ? 1 : -1;
+
+				Shift(e1Dir * e1MoveIntensity * intersectionRec.Width, 0);
+				other.Shift(-e1Dir * e2MoveIntensity * intersectionRec.Width, 0);
+			}
+		}
 
 
 
