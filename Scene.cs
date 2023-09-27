@@ -10,17 +10,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnfinishedBusinessman.StereoGame.Hitbox;
 
 namespace StereoGame
 {
-	public class Scene : Entity
+    public class Scene : Entity
 	{
 		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
-
-
-
-
 
 
 
@@ -160,75 +157,49 @@ namespace StereoGame
 					CollisionEntity e2 = collisionEntitiesList[j];
 					
 
-					if (e1.GetHitbox().VisuallyIntersects(e2.GetHitbox()))
+					if (e1.GetHitbox().Intersects(e2.GetHitbox()))
 					{
+
+						//don't care about collisions between two static objects
+						if (e1.CollisionWeight.Equals(Double.PositiveInfinity) && e2.CollisionWeight.Equals(Double.PositiveInfinity))
+						{
+							return;
+						}
+
+
 
 						//call the respective events
 						e1.OnCollision(e2);
 						e2.OnCollision(e1);
 
+
+						//compute which percentage of the displacement each entity will do
+						float w1 = e1.CollisionWeight;
+						float w2 = e2.CollisionWeight;
+
+						float normalConstant = (1 / w1) + (1 / w2);
+						float e1MoveIntensity = (1 / w1) / normalConstant;
+						float e2MoveIntensity = (1 / w2) / normalConstant;
+						Vector2 penetrationVector;
+
+
 						//get them out of collision state
-						SolveCollision(e1, e2);
+						if (e1.GetHitbox().GetTypeId() <= e2.GetHitbox().GetTypeId())
+						{
+							penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
+						}
+						else
+						{
+							penetrationVector = e2.GetHitbox().SolveCollision(e1.GetHitbox());
+						}
+
+						//TODOOOO SHIFT HERE THE TWO ENTITIES
+						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
+						e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
 
 					}
 				}
 			}
-
-
-
-
-
-		}
-
-		private void SolveCollision(CollisionEntity e1, CollisionEntity e2)
-		{
-			//don't care about collisions between two static objects
-			if (e1.CollisionWeight.Equals(Double.PositiveInfinity) && e2.CollisionWeight.Equals(Double.PositiveInfinity))
-			{
-				return;
-			}
-
-			//for now, don't care when two elements are perfectly superposed 
-			if (e1.GetPosition().EqualsWithTolerence(e2.GetPosition(), 1E-02f))
-			{
-				return;
-			}
-
-
-			RectangleEntity e1Hitbox = e1.GetHitbox();
-			RectangleEntity e2Hitbox = e2.GetHitbox();
-
-			Rectangle collisionRectangle = e1Hitbox.VisualIntersectionRectangle(e2Hitbox);
-
-			//compute which percentage of the displacement each entity will do
-			float normalConstant = (1 / e1.CollisionWeight) + (1 / e2.CollisionWeight);
-			float e1MoveIntensity = (1 / e1.CollisionWeight) / normalConstant;
-			float e2MoveIntensity = (1 / e2.CollisionWeight) / normalConstant;
-
-
-
-
-
-			//displace the entities based on which of the dimensions of intersection is smaller
-			if (collisionRectangle.Width >= collisionRectangle.Height)
-			{
-				//displace vertically 
-				int e1Dir = (e1Hitbox.GetTopLeftPosition().Y > e2Hitbox.GetTopLeftPosition().Y) ? 1 : -1;
-
-				e1.ShiftPosition(0, e1Dir * (float)e1MoveIntensity * collisionRectangle.Height);
-				e2.ShiftPosition(0, -e1Dir * (float)e2MoveIntensity * collisionRectangle.Height);
-			}
-			else
-			{
-				//displace horizontally 
-				int e1Dir = (e1Hitbox.GetTopLeftPosition().X > e2Hitbox.GetTopLeftPosition().X) ? 1 : -1;
-
-				e1.ShiftPosition(e1Dir * (float)e1MoveIntensity * collisionRectangle.Width, 0);
-				e2.ShiftPosition(-e1Dir * (float)e2MoveIntensity * collisionRectangle.Width, 0);
-			}
-
-
-
 		}
 
 
