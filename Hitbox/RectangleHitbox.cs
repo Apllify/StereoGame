@@ -50,7 +50,8 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
         public IHitbox Shifted(float shiftX, float shiftY)
         {
             return new RectangleHitbox(hitboxRectangle.X + shiftX, hitboxRectangle.Y + shiftY,
-                                        hitboxRectangle.Width, hitboxRectangle.Height);
+                                        hitboxRectangle.Width, hitboxRectangle.Height, 
+                                        SpritedEntity.SpriteAnchor.TopLeft);
         }
 
 		public RectangleF GetBoundingBox()
@@ -73,11 +74,11 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 
 
 
-        public Vector2 SolveCollision(IHitbox other, float w1, float w2)
+        public Vector2 SolveCollision(IHitbox other)
         {
             if (other is RectangleHitbox)
             {
-                return SolveBoxCollision((RectangleHitbox) other , w1, w2);
+                return SolveBoxCollision((RectangleHitbox) other);
 			}
             else
             {
@@ -92,14 +93,9 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
         /// <param name="other"></param>
         /// <param name="w1">The weight of the entity whose hitbox SolveBoxCollision() is called from.</param>
         /// <param name="w2">The weight of the entity containing the hitbox passed as argument.</param>
-        private Vector2 SolveBoxCollision(RectangleHitbox other, float w1, float w2)
+        private Vector2 SolveBoxCollision(RectangleHitbox other)
         {
 
-			//don't care about collisions between two static objects
-			if (w1.Equals(Double.PositiveInfinity) && w2.Equals(Double.PositiveInfinity))
-			{
-				return;
-			}
 
             //for now, don't care when an element is inside another
             RectangleF intersectionRec = GetBoundingBox().Intersection(other.GetBoundingBox());
@@ -111,10 +107,7 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 			}
 
 
-			//compute which percentage of the displacement each entity will do
-			float normalConstant = (1 / w1) + (1 / w2);
-			float e1MoveIntensity = (1 / w1) / normalConstant;
-			float e2MoveIntensity = (1 / w2) / normalConstant;
+
 
 
 
@@ -126,16 +119,14 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 				//displace vertically 
 				int e1Dir = (GetBoundingBox().TopLeft.Y > other.GetBoundingBox().TopLeft.Y) ? 1 : -1;
 
-				Shift(0, e1Dir * e1MoveIntensity * intersectionRec.Height);
-				other.Shift(0, -e1Dir * e2MoveIntensity * intersectionRec.Height);
+				return new Vector2(0, e1Dir * intersectionRec.Height);
 			}
 			else
 			{
 				//displace horizontally 
 				int e1Dir = (GetBoundingBox().TopLeft.X > other.GetBoundingBox().TopLeft.X) ? 1 : -1;
 
-				Shift(e1Dir * e1MoveIntensity * intersectionRec.Width, 0);
-				other.Shift(-e1Dir * e2MoveIntensity * intersectionRec.Width, 0);
+				return new Vector2(e1Dir * intersectionRec.Width, 0);
 			}
 		}
 

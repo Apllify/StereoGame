@@ -23,6 +23,13 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 
 		public RectangleF GetBoundingBox();
 
-		public Vector2 SolveCollision(IHitbox other, float w1, float w2);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns>The smallest normed vector that would get the caller out of collision.
+		/// Reversing that vector allows the callee to get out of collision.</returns>
+		public Vector2 SolveCollision(IHitbox other);
 	}
 }

@@ -21,10 +21,6 @@ namespace StereoGame
 
 
 
-
-
-
-
 		///<summary>
 		///The constructor, only creates the basic fields, does NOT load the entities
 		///</summary>
@@ -164,29 +160,42 @@ namespace StereoGame
 					if (e1.GetHitbox().Intersects(e2.GetHitbox()))
 					{
 
-						//call the respective events
-						e1.OnCollision(e2);
-						e2.OnCollision(e1);
-
-
 						//don't care about collisions between two static objects
 						if (e1.CollisionWeight.Equals(Double.PositiveInfinity) && e2.CollisionWeight.Equals(Double.PositiveInfinity))
 						{
 							return;
 						}
 
+
+
+						//call the respective events
+						e1.OnCollision(e2);
+						e2.OnCollision(e1);
+
+
+						//compute which percentage of the displacement each entity will do
+						float w1 = e1.CollisionWeight;
+						float w2 = e2.CollisionWeight;
+
+						float normalConstant = (1 / w1) + (1 / w2);
+						float e1MoveIntensity = (1 / w1) / normalConstant;
+						float e2MoveIntensity = (1 / w2) / normalConstant;
 						Vector2 penetrationVector;
 
 
 						//get them out of collision state
 						if (e1.GetHitbox().GetTypeId() <= e2.GetHitbox().GetTypeId())
 						{
-							penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox(), e1.CollisionWeight, e2.CollisionWeight);
+							penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
 						}
 						else
 						{
-							penetrationVector = e2.GetHitbox().SolveCollision(e1.GetHitbox(), e2.CollisionWeight, e1.CollisionWeight);
+							penetrationVector = e2.GetHitbox().SolveCollision(e1.GetHitbox());
 						}
+
+						//TODOOOO SHIFT HERE THE TWO ENTITIES
+						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
+						e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
 
 					}
 				}
