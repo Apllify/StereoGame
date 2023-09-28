@@ -66,7 +66,43 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
             {
                 return hitboxRectangle.Intersects(otherHitbox.GetBoundingBox());
             }
-            else
+            else if (otherHitbox is CircleHitbox)
+            {
+                CircleHitbox otherCircle = otherHitbox as CircleHitbox;
+                Vector2 circleCenter = new Vector2(otherCircle.X, otherCircle.Y);
+
+				//determine closest horizontal and vertical edges of the rectangle
+				//edges are represented in rectangles so 
+				Vector2 horizontalLineP1;
+				Vector2 horizontalLineP2;
+
+				Vector2 verticalLineP1;
+                Vector2 verticalLineP2;
+
+				(horizontalLineP1, horizontalLineP2) = (circleCenter.Y > hitboxRectangle.Y) ?
+							(hitboxRectangle.BottomRight, hitboxRectangle.BottomLeft) :
+							(hitboxRectangle.TopRight, hitboxRectangle.TopLeft);
+
+
+
+				(verticalLineP1, verticalLineP2) = (circleCenter.X > hitboxRectangle.X) ?
+                                            (hitboxRectangle.TopRight, hitboxRectangle.BottomRight) :
+                                            (hitboxRectangle.TopLeft,  hitboxRectangle.BottomLeft);
+                                            
+
+                //compute the shortest distances to the edges now
+                float vertDistance = linePointShortest(verticalLineP1, verticalLineP2, circleCenter).Length();
+				float horDistance = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter).Length();
+
+                //check if one of the distance is smaller than the radius of the circle
+                if (horDistance < 20)
+                {
+                    Debug.WriteLine("shoudl be collision");
+                } 
+                return (vertDistance < otherCircle.Radius || horDistance < otherCircle.Radius);
+
+			}
+			else
             {
                 throw new NotImplementedException();
             }
@@ -87,17 +123,33 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
             }
         }
 
+        /// <summary>
+        /// Returns the shortest Vector2 connecting the point to the segment.
+        /// </summary>
+        /// <param name="lineP1"></param>
+        /// <param name="lineP2"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        private Vector2 linePointShortest(Vector2 lineP1, Vector2 lineP2, Vector2 point)
+        {
+            //remove edge case 
+            if (lineP1 == lineP2)
+            {
+                return (lineP1 - point);
+            }
+
+            //project the point on the line 
+            float lineProjection = (point - lineP1).Dot((lineP2 - lineP1)) / ((lineP2 - lineP1).Length());
+            lineProjection = Math.Clamp(lineProjection, 0, 1);
+
+            return (point - lineProjection * (lineP2 - lineP1)); 
+        }
 
         /// <summary>
-        /// 
+        /// Handles box-box collisions by using the intersection rectangle.
         /// </summary>
-        /// <param name="other"></param>
-        /// <param name="w1">The weight of the entity whose hitbox SolveBoxCollision() is called from.</param>
-        /// <param name="w2">The weight of the entity containing the hitbox passed as argument.</param>
         private Vector2 SolveBoxCollision(RectangleHitbox other)
         {
-
-
             //for now, don't care when an element is inside another
             RectangleF intersectionRec = GetBoundingBox().Intersection(other.GetBoundingBox());
 
@@ -106,12 +158,6 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 			{
 				return Vector2.Zero;
 			}
-
-
-
-
-
-
 
 
 			//displace the entities based on which of the dimensions of intersection is smaller
@@ -129,6 +175,39 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 
 				return new Vector2(e1Dir * intersectionRec.Width, 0);
 			}
+		}
+
+
+
+        /// <summary>
+        /// Handles box-circle collisions.
+        /// Just does standard displacing along collision axis.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        private Vector2 SolveCircleCollision(CircleHitbox other)
+        {
+            //similar behavior to intersection checking
+			Vector2 circleCenter = new Vector2(other.X, other.Y);
+
+			//determine closest horizontal and vertical edges of the rectangle
+			//edges are represented in rectangles so 
+			var (verticalLineP1, verticalLineP2) = (circleCenter.X > hitboxRectangle.X) ?
+										(hitboxRectangle.TopRight, hitboxRectangle.BottomRight) :
+										(hitboxRectangle.TopLeft, hitboxRectangle.BottomLeft);
+
+			var (horizontalLineP1, horizontalLineP2) = (circleCenter.Y > hitboxRectangle.Y) ?
+										(hitboxRectangle.BottomRight, hitboxRectangle.BottomLeft) :
+										(hitboxRectangle.TopRight, hitboxRectangle.TopLeft);
+
+			//compute the shortest paths to the edges now
+			Vector2 vertShortest = linePointShortest(verticalLineP1, verticalLineP2, circleCenter);
+			Vector2 horShortest = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter);
+
+            //return the smallest of the two for now ?
+            Vector2 shortestDisplacement = (vertShortest.Length() < horShortest.Length()) ?
+                                            vertShortest : horShortest;
+            return shortestDisplacement;   
 		}
 
 
