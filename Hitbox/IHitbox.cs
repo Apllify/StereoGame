@@ -16,12 +16,16 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 		// rectangle.SolveCollision(circle) 
 		public int GetTypeId();
 
+		//Current Hitbox IDs are : 
+		//0 : rectangle
+		//1 : circle
+
 		public void Shift(float shiftX, float shiftY);
 		public IHitbox Shifted(float shiftX, float shiftY);
 
-		public bool Intersects(IHitbox other);
-
 		public RectangleF GetBoundingBox();
+
+		public bool Intersects(IHitbox other);
 
 
 		/// <summary>

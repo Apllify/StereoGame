@@ -61,6 +61,7 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 
 		public bool Intersects(IHitbox otherHitbox)
         {
+            
             if (otherHitbox is RectangleHitbox)
             {
                 return hitboxRectangle.Intersects(otherHitbox.GetBoundingBox());

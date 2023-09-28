@@ -184,14 +184,8 @@ namespace StereoGame
 
 
 						//get them out of collision state
-						if (e1.GetHitbox().GetTypeId() <= e2.GetHitbox().GetTypeId())
-						{
-							penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
-						}
-						else
-						{
-							penetrationVector = e2.GetHitbox().SolveCollision(e1.GetHitbox());
-						}
+						penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
+
 
 						//TODOOOO SHIFT HERE THE TWO ENTITIES
 						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
