@@ -21,6 +21,7 @@ namespace StereoGame
 
 
 
+
 		///<summary>
 		///The constructor, only creates the basic fields, does NOT load the entities
 		///</summary>

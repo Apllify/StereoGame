@@ -94,11 +94,8 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
                 float vertDistance = linePointShortest(verticalLineP1, verticalLineP2, circleCenter).Length();
 				float horDistance = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter).Length();
 
+
                 //check if one of the distance is smaller than the radius of the circle
-                if (horDistance < 20)
-                {
-                    Debug.WriteLine("shoudl be collision");
-                } 
                 return (vertDistance < otherCircle.Radius || horDistance < otherCircle.Radius);
 
 			}
@@ -115,8 +112,12 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
         {
             if (other is RectangleHitbox)
             {
-                return SolveBoxCollision((RectangleHitbox) other);
+                return SolveBoxCollision(other as RectangleHitbox);
 			}
+            else if (other is CircleHitbox)
+            {
+                return SolveCircleCollision(other as CircleHitbox);
+            }
             else
             {
                 throw new NotImplementedException();
@@ -129,20 +130,20 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
         /// <param name="lineP1"></param>
         /// <param name="lineP2"></param>
         /// <param name="point"></param>
-        /// <returns></returns>
+        /// <returns>A vector from the line to the argument point</returns>
         private Vector2 linePointShortest(Vector2 lineP1, Vector2 lineP2, Vector2 point)
         {
             //remove edge case 
             if (lineP1 == lineP2)
             {
-                return (lineP1 - point);
+                return (point - lineP1);
             }
 
             //project the point on the line 
             float lineProjection = (point - lineP1).Dot((lineP2 - lineP1)) / ((lineP2 - lineP1).Length());
             lineProjection = Math.Clamp(lineProjection, 0, 1);
 
-            return (point - lineProjection * (lineP2 - lineP1)); 
+            return -((point - lineP1) - lineProjection * (lineP2 - lineP1)); 
         }
 
         /// <summary>
@@ -204,10 +205,15 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 			Vector2 vertShortest = linePointShortest(verticalLineP1, verticalLineP2, circleCenter);
 			Vector2 horShortest = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter);
 
-            //return the smallest of the two for now ?
-            Vector2 shortestDisplacement = (vertShortest.Length() < horShortest.Length()) ?
-                                            vertShortest : horShortest;
-            return shortestDisplacement;   
+            //transform each path into a displacement path
+            Vector2 vertDisplacement;
+            Vector2 horDisplacement;
+
+
+
+
+			//since the vector goes from rec edge to circle, we return the opposite
+			return (new Vector2(other.X, other.Y) - (Vector2)hitboxRectangle.Center)/10;   
 		}
 
 
