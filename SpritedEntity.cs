@@ -15,11 +15,12 @@ namespace StereoGame
 	{
 		//class members
 		public static Texture2D WhiteRectangle;
-		public static Texture2D HollowWhiteRectangle;
 
 		public const float ActiveDepth = 0.5f;
-		public const float BackgroundDepth = 0.2f;
-		public const float ForegroundDepth = 1f;
+		public const float BackgroundDepth = 1f;
+		public const float ForegroundDepth = 0.2f;
+
+		public const float DepthStep = 0.001f; 
 
 
 		//instance members
@@ -116,6 +117,19 @@ namespace StereoGame
 			return position;
 		}
 
+
+		/// <summary>
+		/// Converts an int in (-inf, +inf) to a depth accepted by sprite batch draw.
+		/// </summary>
+		/// <param name="layerIndex">
+		/// The draw priority as an int (0 = active layer) (1 = slightly in front) etc...
+		/// </param>
+		/// <returns></returns>
+		public static float DepthLayer(int layerIndex)
+		{
+			return ActiveDepth - (layerIndex * DepthStep);
+		}
+
 		public virtual void ShiftPosition(float shiftX, float shiftY)
 		{
 			position.X += shiftX;
@@ -158,7 +172,26 @@ namespace StereoGame
 			RectangleDraw(spriteBatch, location, color, SpritedEntity.ActiveDepth);
 		}
 
-		public static void HRectangleDraw(SpriteBatch spriteBatch Vector2 topLeft, Vector2 dimensions)
+		public static void HRectangleDraw(SpriteBatch spriteBatch, RectangleF location, int thickness, Color color, float layerDepth)
+		{
+			//we use the rectangle draw function to make lines 
+			RectangleF hor1 = new RectangleF(location.TopLeft, new Size2(location.Width, thickness));
+			RectangleF hor2 = new RectangleF(location.Left, location.Bottom - thickness, location.Width, thickness);
+
+			RectangleF ver1 = new RectangleF(location.TopLeft, new Size2(thickness, location.Height));
+			RectangleF ver2 = new RectangleF(location.Right - thickness, location.Top, thickness, location.Height);
+
+			RectangleDraw(spriteBatch, hor1, color, layerDepth);
+			RectangleDraw(spriteBatch, hor2, color, layerDepth);
+			RectangleDraw(spriteBatch, ver1, color, layerDepth);
+			RectangleDraw(spriteBatch, ver2, color, layerDepth);
+
+		}
+
+		public static void HRectangleDraw(SpriteBatch spriteBatch, RectangleF location, int thickness, Color color)
+		{
+			HRectangleDraw(spriteBatch, location, thickness, color, SpritedEntity.ActiveDepth);
+		}
 
 		public static void SpriteDraw(SpriteBatch spriteBatch, Vector2 drawPosition, Texture2D sprite, SpriteAnchor spriteAnchor, float layerDepth, Color colorMask, float scale)
 		{
