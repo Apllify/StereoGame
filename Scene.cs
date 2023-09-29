@@ -18,9 +18,7 @@ namespace StereoGame
 		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
-
-
-
+		public bool ShowHitboxes { get; set; } = true;
 
 
 
@@ -244,10 +242,17 @@ namespace StereoGame
 				entity.Draw(spriteBatch);
 			}
 
+
+			//draw collision entities + hitboxes if needed
 			foreach (Entity collisionEntity in collisionEntitiesList)
 			{
-
 				collisionEntity.Draw(spriteBatch);
+
+
+				if (ShowHitboxes)
+				{
+					//do stuff here
+				}
 			}
 		}
 	}
