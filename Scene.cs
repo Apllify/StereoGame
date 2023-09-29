@@ -186,18 +186,11 @@ namespace StereoGame
 						float normalConstant = (1 / w1) + (1 / w2);
 						float e1MoveIntensity = (1 / w1) / normalConstant;
 						float e2MoveIntensity = (1 / w2) / normalConstant;
-						Vector2 penetrationVector;
+
+						Vector2 penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
 
 
-						//get them out of collision state
-						if (e1.GetHitbox().GetTypeId() <= e2.GetHitbox().GetTypeId())
-						{
-							penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
-						}
-						else
-						{
-							penetrationVector = e2.GetHitbox().SolveCollision(e1.GetHitbox());
-						}
+
 
 						//TODOOOO SHIFT HERE THE TWO ENTITIES
 						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
