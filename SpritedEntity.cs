@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using MonoGame.Extended;
 
 namespace StereoGame
 {
@@ -17,8 +17,10 @@ namespace StereoGame
 		public static Texture2D WhiteRectangle;
 
 		public const float ActiveDepth = 0.5f;
-		public const float BackgroundDepth = 0.2f;
-		public const float ForegroundDepth = 1f;
+		public const float BackgroundDepth = 1f;
+		public const float ForegroundDepth = 0.2f;
+
+		public const float DepthStep = 0.001f; 
 
 
 		//instance members
@@ -115,6 +117,19 @@ namespace StereoGame
 			return position;
 		}
 
+
+		/// <summary>
+		/// Converts an int in (-inf, +inf) to a depth accepted by sprite batch draw.
+		/// </summary>
+		/// <param name="layerIndex">
+		/// The draw priority as an int (0 = active layer) (1 = slightly in front) etc...
+		/// </param>
+		/// <returns></returns>
+		public static float DepthLayer(int layerIndex)
+		{
+			return ActiveDepth - (layerIndex * DepthStep);
+		}
+
 		public virtual void ShiftPosition(float shiftX, float shiftY)
 		{
 			position.X += shiftX;
@@ -137,33 +152,45 @@ namespace StereoGame
 		}
 
 
-		public static void RectangleDraw(SpriteBatch spriteBatch, Vector2 topLeft, Vector2 dimensions, Color color, float layerDepth)
+
+		public static void RectangleDraw(SpriteBatch spriteBatch, RectangleF location, Color color, float layerDepth)
 		{
 			//make sure the singular rectangle texture has already been created
 			if (SpritedEntity.WhiteRectangle == null)
 			{
 				SpritedEntity.WhiteRectangle = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
 				SpritedEntity.WhiteRectangle.SetData(new[] { Color.White });
-			}	
+			}
 
-			spriteBatch.Draw(SpritedEntity.WhiteRectangle, topLeft, null,
-				color, 0f, Vector2.Zero, dimensions,
+			spriteBatch.Draw(SpritedEntity.WhiteRectangle, location.TopLeft, null,
+				color, 0f, Vector2.Zero, location.Size,
 				SpriteEffects.None, layerDepth);
 		}
 
-		public static void RectangleDraw(SpriteBatch spriteBatch, Vector2 topLeft, Vector2 dimensions, Color color)
+		public static void RectangleDraw(SpriteBatch spriteBatch, RectangleF location, Color color)
 		{
-			RectangleDraw(spriteBatch, topLeft, dimensions, color, SpritedEntity.ActiveDepth);
+			RectangleDraw(spriteBatch, location, color, SpritedEntity.ActiveDepth);
 		}
 
-		public static void RectangleDraw(SpriteBatch spriteBatch, Rectangle location, Color color, float layerDepth)
+		public static void HRectangleDraw(SpriteBatch spriteBatch, RectangleF location, int thickness, Color color, float layerDepth)
 		{
-			RectangleDraw(spriteBatch, new Vector2(location.X, location.Y), location.Size.ToVector2(), color, layerDepth);
+			//we use the rectangle draw function to make lines 
+			RectangleF hor1 = new RectangleF(location.TopLeft, new Size2(location.Width, thickness));
+			RectangleF hor2 = new RectangleF(location.Left, location.Bottom - thickness, location.Width, thickness);
+
+			RectangleF ver1 = new RectangleF(location.TopLeft, new Size2(thickness, location.Height));
+			RectangleF ver2 = new RectangleF(location.Right - thickness, location.Top, thickness, location.Height);
+
+			RectangleDraw(spriteBatch, hor1, color, layerDepth);
+			RectangleDraw(spriteBatch, hor2, color, layerDepth);
+			RectangleDraw(spriteBatch, ver1, color, layerDepth);
+			RectangleDraw(spriteBatch, ver2, color, layerDepth);
+
 		}
 
-		public static void RectangleDraw(SpriteBatch spriteBatch, Rectangle location, Color color)
+		public static void HRectangleDraw(SpriteBatch spriteBatch, RectangleF location, int thickness, Color color)
 		{
-			RectangleDraw(spriteBatch, new Vector2(location.X, location.Y), location.Size.ToVector2(), color, SpritedEntity.ActiveDepth);
+			HRectangleDraw(spriteBatch, location, thickness, color, SpritedEntity.ActiveDepth);
 		}
 
 		public static void SpriteDraw(SpriteBatch spriteBatch, Vector2 drawPosition, Texture2D sprite, SpriteAnchor spriteAnchor, float layerDepth, Color colorMask, float scale)

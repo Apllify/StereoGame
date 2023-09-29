@@ -19,6 +19,9 @@ namespace StereoGame
 		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
+		public bool ShowHitboxes { get; set; } = true;
+
+
 
 
 
@@ -47,8 +50,11 @@ namespace StereoGame
 		/// <param name="entity"></param>
 		public void AddEntity(Entity entity)
 		{
-			entity.entityEventCaller += HandleEntityEvent;
-			regularEntitiesList.Add(entity);
+			if (entity is not null)
+			{
+				entity.entityEventCaller += HandleEntityEvent;
+				regularEntitiesList.Add(entity);
+			}
 		}
 
 		public void AddCollisionEntity(CollisionEntity entity)
@@ -210,10 +216,26 @@ namespace StereoGame
 				entity.Draw(spriteBatch);
 			}
 
-			foreach (Entity collisionEntity in collisionEntitiesList)
-			{
 
+			//draw collision entities + hitboxes if needed
+			foreach (CollisionEntity collisionEntity in collisionEntitiesList)
+			{
 				collisionEntity.Draw(spriteBatch);
+
+
+				if (ShowHitboxes)
+				{
+					//draw the hitbox one depth step over the entity
+					IHitbox curHitbox = collisionEntity.GetHitbox();
+
+					if (curHitbox is not null)
+					{
+						if ((curHitbox = curHitbox as RectangleHitbox) is not null){
+							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 3, Color.LawnGreen, 
+								collisionEntity.LayerDepth - SpritedEntity.DepthStep);
+						}
+					}
+				}
 			}
 		}
 	}
