@@ -75,7 +75,7 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 		{
 			if (other.GetTypeId() < GetTypeId())
 			{
-				return other.SolveCollision(this);
+				return -other.SolveCollision(this);
 			}
 
 			if (other is CircleHitbox)

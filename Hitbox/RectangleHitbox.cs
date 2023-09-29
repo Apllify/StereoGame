@@ -141,9 +141,12 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 
             //project the point on the line 
             float lineProjection = (point - lineP1).Dot((lineP2 - lineP1)) / ((lineP2 - lineP1).Length());
-            lineProjection = Math.Clamp(lineProjection, 0, 1);
+            lineProjection /= (lineP2 - lineP1).Length();
 
-            return -((point - lineP1) - lineProjection * (lineP2 - lineP1)); 
+			lineProjection = Math.Clamp(lineProjection, 0, 1);
+
+            return -((point - lineP1) - lineProjection * (lineP2 - lineP1));
+            
         }
 
         /// <summary>
@@ -205,15 +208,15 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 			Vector2 vertShortest = linePointShortest(verticalLineP1, verticalLineP2, circleCenter);
 			Vector2 horShortest = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter);
 
-            //transform each path into a displacement path
+            //TODO : fix this pls
             Vector2 vertDisplacement;
             Vector2 horDisplacement;
 
 
 
 
-			//since the vector goes from rec edge to circle, we return the opposite
-			return (new Vector2(other.X, other.Y) - (Vector2)hitboxRectangle.Center)/10;   
+            //since the vector goes from rec edge to circle, we return the opposite
+            return ((Vector2)hitboxRectangle.Center - new Vector2(other.X, other.Y)) / 10;   
 		}
 
 
