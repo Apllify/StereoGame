@@ -231,9 +231,17 @@ namespace StereoGame
 
 					if (curHitbox is not null)
 					{
-						if ((curHitbox = curHitbox as RectangleHitbox) is not null){
-							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 2, Color.LawnGreen, 
+						if (curHitbox is RectangleHitbox){
+							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 
+								DebugHitboxesThickness, Color.LawnGreen, 
 								collisionEntity.LayerDepth - SpritedEntity.DepthStep);
+						}
+						else if (curHitbox is CircleHitbox)
+						{
+							CircleHitbox circHitbox = curHitbox as CircleHitbox;
+
+							SpritedEntity.CircleDraw(spriteBatch, new Vector2(circHitbox.X, circHitbox.Y),
+													 circHitbox.Radius, DebugHitboxesThickness, Color.LawnGreen);
 						}
 					}
 				}
