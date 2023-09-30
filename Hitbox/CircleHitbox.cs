@@ -15,12 +15,19 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 		public float Y { get; private set; }
 
 		public float Radius { get; private set; }
+
+		private Vector2 lastFrameMovement;
+
+
+
 		public CircleHitbox(float _x, float _y, float _radius)
 		{
 			X = _x;
 			Y = _y;
 
 			Radius = _radius;
+
+			lastFrameMovement = new Vector2(0, 0);
 		}
 
 		public int GetTypeId()
@@ -32,6 +39,14 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 		{
 			X += shiftX;
 			Y += shiftY;
+
+			lastFrameMovement.X = shiftX;
+			lastFrameMovement.Y = shiftY;
+		}
+
+		public Vector2 GetLastMove()
+		{
+			return lastFrameMovement;
 		}
 
 		public IHitbox Shifted(float shiftX, float shiftY)

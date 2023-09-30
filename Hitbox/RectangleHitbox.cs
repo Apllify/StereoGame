@@ -14,6 +14,7 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
     {
 
         protected RectangleF hitboxRectangle;
+        private Vector2 lastFrameMovement;
 
 
         public RectangleHitbox(float x, float y, float width, float height, SpritedEntity.SpriteAnchor rectangleAnchor)
@@ -23,6 +24,10 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
                                                                             new Vector2(width, height), rectangleAnchor);
 
             hitboxRectangle = new RectangleF(topLeftPosition.X, topLeftPosition.Y, width, height);
+
+
+            //keep track of our movements
+            lastFrameMovement = new Vector2(0, 0);
         }
 
         public RectangleHitbox(float x, float y, float _width, float _height) :
@@ -42,9 +47,18 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
             return 0;
         }
 
+        public Vector2 GetLastMove()
+        {
+            return lastFrameMovement;
+        }
+
         public void Shift(float shiftX, float shiftY)
         {
             hitboxRectangle.Offset(shiftX, shiftY);
+
+            //keep track of this offset
+            lastFrameMovement.X = shiftX;
+            lastFrameMovement.Y = shiftY;
         }
 
         public IHitbox Shifted(float shiftX, float shiftY)
@@ -71,8 +85,12 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
                 CircleHitbox otherCircle = otherHitbox as CircleHitbox;
                 Vector2 circleCenter = new Vector2(otherCircle.X, otherCircle.Y);
 
-				//determine closest horizontal and vertical edges of the rectangle
-				//edges are represented in rectangles so 
+                //INTERSECTION CASE 1 : the center of the circle is in the rectangle
+                if (GetBoundingBox().Contains(circleCenter)) {
+                    return true;
+                }
+
+				//INTERSECTION CASE 2 : the center of circle is outside the rectangle but still collides
 				Vector2 horizontalLineP1;
 				Vector2 horizontalLineP2;
 
@@ -154,28 +172,80 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
         /// </summary>
         private Vector2 SolveBoxCollision(RectangleHitbox other)
         {
-            //for now, don't care when an element is inside another
-            RectangleF intersectionRec = GetBoundingBox().Intersection(other.GetBoundingBox());
-
-			if (intersectionRec == GetBoundingBox() ||
-                intersectionRec == other.GetBoundingBox()) 
-			{
-				return Vector2.Zero;
-			}
+            //handle the case where one of the elements is contained within the other
+            RectangleF selfRec = GetBoundingBox();
+            RectangleF otherRec = other.GetBoundingBox();
 
 
+
+            //OVERARCHING CASE 1 : one rectangle is inside the other
+            RectangleF intersectionRec = selfRec.Intersection(otherRec);
+            if (intersectionRec == selfRec|| intersectionRec == otherRec){
+
+                //CASE 1 : we are inside of the other rectangle
+                if (intersectionRec == selfRec)
+                {
+                    //TODO : probably implement this ? pretty please ?
+                    if (GetLastMove() == Vector2.Zero)
+                    {
+                        return Vector2.Zero;
+                    }
+
+                    Vector2 exitVector = -GetLastMove().NormalizedCopy();
+
+                    //compute the distances required to get out on either direction
+                    float verDistance = Math.Min(Math.Abs(selfRec.Center.Y - otherRec.Top),
+                                                 Math.Abs(selfRec.Y - otherRec.Bottom));
+
+                    float horDistance = Math.Min(Math.Abs(selfRec.Center.X - otherRec.Left),
+                                                 Math.Abs(selfRec.Center.X - otherRec.Right)) ;
+
+                    verDistance += selfRec.Height / 2;
+                    horDistance += selfRec.Width / 2;
+
+
+                    //determine whether we need a diagonal or straight displacement
+                    if (exitVector.ToAngle() % Math.PI/4 == 0) //straight
+                    {
+                        exitVector *= verDistance;
+                        exitVector *= horDistance;
+
+                        return exitVector;
+                    }
+                    else //diagonal / mixed angle
+                    {
+                        exitVector /= Math.Max(Math.Abs(exitVector.X), Math.Abs(exitVector.Y));
+                        float multiplier = (Math.Abs(exitVector.X) > Math.Abs(exitVector.Y)) ?
+                                           horDistance : verDistance;
+
+                        return multiplier * exitVector;
+					}
+
+
+
+
+                }
+                // CASE 2 : the other rectangle is inside of us
+                else
+                {
+                    return -other.SolveBoxCollision(this);
+                }
+            }
+
+
+            //OVERARCHING CASE 2 : the rectangles simply intersect
 			//displace the entities based on which of the dimensions of intersection is smaller
 			if (intersectionRec.Width >= intersectionRec.Height)
 			{
 				//displace vertically 
-				int e1Dir = (GetBoundingBox().TopLeft.Y > other.GetBoundingBox().TopLeft.Y) ? 1 : -1;
+				int e1Dir = (selfRec.TopLeft.Y > otherRec.TopLeft.Y) ? 1 : -1;
 
 				return new Vector2(0, e1Dir * intersectionRec.Height);
 			}
 			else
 			{
 				//displace horizontally 
-				int e1Dir = (GetBoundingBox().TopLeft.X > other.GetBoundingBox().TopLeft.X) ? 1 : -1;
+				int e1Dir = (selfRec.TopLeft.X > otherRec.TopLeft.X) ? 1 : -1;
 
 				return new Vector2(e1Dir * intersectionRec.Width, 0);
 			}

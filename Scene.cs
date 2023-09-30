@@ -20,6 +20,7 @@ namespace StereoGame
 		private List<CollisionEntity> collisionEntitiesList;
 
 		public bool ShowHitboxes { get; set; } = true;
+		private const int DebugHitboxesThickness = 2;
 
 
 
@@ -231,7 +232,7 @@ namespace StereoGame
 					if (curHitbox is not null)
 					{
 						if ((curHitbox = curHitbox as RectangleHitbox) is not null){
-							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 3, Color.LawnGreen, 
+							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 2, Color.LawnGreen, 
 								collisionEntity.LayerDepth - SpritedEntity.DepthStep);
 						}
 					}

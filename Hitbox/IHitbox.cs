@@ -20,6 +20,16 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 		//0 : rectangle
 		//1 : circle
 
+
+
+		/// <summary>
+		/// Function that returns the displacement of the hitbox over the last frame.
+		/// </summary>
+		/// <returns></returns>
+		public Vector2 GetLastMove();
+
+
+
 		public void Shift(float shiftX, float shiftY);
 		public IHitbox Shifted(float shiftX, float shiftY);
 
