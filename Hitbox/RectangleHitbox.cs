@@ -264,6 +264,17 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
             //similar behavior to intersection checking
 			Vector2 circleCenter = new Vector2(other.X, other.Y);
 
+            //CASE 1 : the center of the circle is inside of the rectangle 
+            if (GetBoundingBox().Contains(circleCenter))
+            {
+                //TODO : get a better algorithm for this 
+				return ((Vector2)hitboxRectangle.Center - new Vector2(other.X, other.Y)) / 10;
+			}
+
+
+
+            //CASE 2 : the center of the circle is NOT in the rectangle 
+
 			//determine closest horizontal and vertical edges of the rectangle
 			//edges are represented in rectangles so 
 			var (verticalLineP1, verticalLineP2) = (circleCenter.X > hitboxRectangle.X) ?
@@ -275,18 +286,17 @@ namespace UnfinishedBusinessman.StereoGame.Hitbox
 										(hitboxRectangle.TopRight, hitboxRectangle.TopLeft);
 
 			//compute the shortest paths to the edges now
-			Vector2 vertShortest = linePointShortest(verticalLineP1, verticalLineP2, circleCenter);
-			Vector2 horShortest = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter);
+			float vertShortest = linePointShortest(verticalLineP1, verticalLineP2, circleCenter).Length();
+			float horShortest = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter).Length();
 
-            //TODO : fix this pls
-            Vector2 vertDisplacement;
-            Vector2 horDisplacement;
+            float finalDisp = other.Radius - Math.Min(vertShortest, horShortest);
+            Vector2 centerToCenter = GetBoundingBox().Center - circleCenter;
 
 
 
 
             //since the vector goes from rec edge to circle, we return the opposite
-            return ((Vector2)hitboxRectangle.Center - new Vector2(other.X, other.Y)) / 10;   
+            return finalDisp * centerToCenter.NormalizedCopy();   
 		}
 
 

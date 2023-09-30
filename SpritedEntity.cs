@@ -205,7 +205,7 @@ namespace StereoGame
 
 
 			//go all around the center drawing the circle pixel by pixel
-			int angleCount = 50;
+			int angleCount = 75;
 			Vector2 scale = new Vector2(thickness, thickness);
 
 			for (int angle = 0; angle < angleCount; angle++)
