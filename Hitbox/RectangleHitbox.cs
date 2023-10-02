@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnfinishedBusinessman.StereoGame.Hitbox
+namespace StereoGame.Hitbox
 {
     public class RectangleHitbox : IHitbox
     {

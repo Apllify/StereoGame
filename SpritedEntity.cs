@@ -58,7 +58,6 @@ namespace StereoGame
 			colorMask = Color.White;
 			scale = 1;
 
-
 			//default tag for all sprited entities
 			Tag = "untagged-sprited-entity";
 		}

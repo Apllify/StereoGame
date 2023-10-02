@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 
 using System;
@@ -10,7 +10,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnfinishedBusinessman.StereoGame.Hitbox;
+using StereoGame;
+using StereoGame.Hitbox;
+
+using act = StereoGame.InputHandler.Action;
 
 namespace StereoGame
 {
@@ -19,7 +22,12 @@ namespace StereoGame
 		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
+
+		public bool DebugModeEnabled = true;
 		public bool ShowHitboxes { get; set; } = true;
+
+		private const int DebugHitboxesThickness = 2;
+
 
 
 
@@ -40,7 +48,6 @@ namespace StereoGame
 		public virtual void Load()
 		{
 			
-
 		}
 
 		/// <summary>
@@ -105,7 +112,15 @@ namespace StereoGame
 		/// <param name="gameTime"></param>
 		protected sealed override void PreUpdate(GameTime gameTime)
 		{
-			
+			//update the input handler
+			InputHandler.CurrentHandler.Update();
+
+
+			//if debug enabled, allow the user to use debug keys
+			if (InputHandler.CurrentHandler.IsActionJustDown(act.DebugToggle))
+			{
+				DebugModeEnabled ^= true;
+			}
 		}
 
 
