@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using UnfinishedBusinessman.StereoGame.Hitbox;
+using StereoGame.Hitbox;
 
 namespace StereoGame
 {

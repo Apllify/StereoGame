@@ -118,9 +118,9 @@ namespace StereoGame
 
 
 			//if debug enabled, allow the user to use debug keys
-			if (InputHandler.CurrentHandler.IsActionJustDown(act.DebugToggle))
+			if (DebugModeEnabled && InputHandler.CurrentHandler.IsActionJustDown(act.DebugToggle))
 			{
-				DebugModeEnabled ^= true;
+				ShowHitboxes ^= true;
 			}
 		}
 

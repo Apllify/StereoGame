@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ namespace StereoGame
 			//CHANGE THE MAPPINGS HERE 
 			ActionMapping = new Dictionary<Action , List<Keys>>()
 			{
-				{Action.DebugToggle, new List<Keys>() {Keys.F1 } },
+				{Action.DebugToggle, new List<Keys>() {Keys.NumPad1 } },
 
 				{Action.MoveUp, new List<Keys>(){Keys.Z} },
 				{Action.MoveDown, new List<Keys>(){Keys.S} },
@@ -71,9 +72,10 @@ namespace StereoGame
 		{
 			List<Keys> keys = ActionMapping[action];
 
+
 			foreach (Keys key in keys)
 			{
-				if (IsKeyJustDown(key))
+				if (IsKeyDown(key))
 				{
 					return true;
 				}
