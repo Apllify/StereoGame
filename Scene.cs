@@ -25,8 +25,9 @@ namespace StereoGame
 
 		public bool DebugModeEnabled = true;
 		public bool ShowHitboxes { get; set; } = true;
-
 		private const int DebugHitboxesThickness = 2;
+
+
 
 
 
@@ -205,8 +206,6 @@ namespace StereoGame
 						Vector2 penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
 
 
-
-
 						//TODOOOO SHIFT HERE THE TWO ENTITIES
 						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
 						e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
@@ -243,9 +242,17 @@ namespace StereoGame
 
 					if (curHitbox is not null)
 					{
-						if ((curHitbox = curHitbox as RectangleHitbox) is not null){
-							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 3, Color.LawnGreen, 
+						if (curHitbox is RectangleHitbox){
+							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 
+								DebugHitboxesThickness, Color.LawnGreen, 
 								collisionEntity.LayerDepth - SpritedEntity.DepthStep);
+						}
+						else if (curHitbox is CircleHitbox)
+						{
+							CircleHitbox circHitbox = curHitbox as CircleHitbox;
+
+							SpritedEntity.CircleDraw(spriteBatch, new Vector2(circHitbox.X, circHitbox.Y),
+													 circHitbox.Radius, DebugHitboxesThickness, Color.LawnGreen);
 						}
 					}
 				}

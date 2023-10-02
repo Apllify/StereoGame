@@ -192,6 +192,34 @@ namespace StereoGame
 			HRectangleDraw(spriteBatch, location, thickness, color, SpritedEntity.ActiveDepth);
 		}
 
+
+		public static void CircleDraw(SpriteBatch spriteBatch, Vector2 center, float radius, int thickness, Color color)
+		{
+			//make sure the singular rectangle texture has already been created
+			if (SpritedEntity.WhiteRectangle == null)
+			{
+				SpritedEntity.WhiteRectangle = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+				SpritedEntity.WhiteRectangle.SetData(new[] { Color.White });
+			}
+
+
+			//go all around the center drawing the circle pixel by pixel
+			int angleCount = 75;
+			Vector2 scale = new Vector2(thickness, thickness);
+
+			for (int angle = 0; angle < angleCount; angle++)
+			{
+				float curRot = (float) (((float)angle / angleCount) * Math.PI * 2);
+				float curX = (float)Math.Cos(curRot) * radius;
+				float curY = (float)Math.Sin(curRot) * radius;
+
+				Vector2 offset = new Vector2(curX, curY);
+
+				spriteBatch.Draw(SpritedEntity.WhiteRectangle, center + offset - (scale / 2), null, color, 
+								 0, Vector2.Zero, scale, SpriteEffects.None, ForegroundDepth );
+			}
+		}
+
 		public static void SpriteDraw(SpriteBatch spriteBatch, Vector2 drawPosition, Texture2D sprite, SpriteAnchor spriteAnchor, float layerDepth, Color colorMask, float scale)
 		{
 			//TODO : take scale into account when drawing this 
