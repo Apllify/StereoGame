@@ -11,14 +11,14 @@ namespace StereoGame.Hitbox
 	public interface IHitbox
 	{
 		// The hitbox priority helps choose which of two handles solving a collision
-		// If rectangle hitbox has lower type id than circle, then calling :
-		// circle.SolveCollision(rectangle) will immediately call
-		// rectangle.SolveCollision(circle) 
+		// Later type IDs must implement collision methods for all earlier type IDs
+		// If rectangle.intersects(circle) is called, it will in turn call circle.intersects(rectangle)
 		public int GetTypeId();
 
 		//Current Hitbox IDs are : 
 		//0 : rectangle
 		//1 : circle
+		//2 : convex polygon
 
 
 
