@@ -192,6 +192,36 @@ namespace StereoGame
 			HRectangleDraw(spriteBatch, location, thickness, color, SpritedEntity.ActiveDepth);
 		}
 
+		public static void LineDraw(SpriteBatch spriteBatch, Vector2 p1, Vector2 p2, int thickness, Color color, float layerDepth)
+		{
+			//make sure the singular rectangle texture has already been created
+			if (SpritedEntity.WhiteRectangle == null)
+			{
+				SpritedEntity.WhiteRectangle = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+				SpritedEntity.WhiteRectangle.SetData(new[] { Color.White });
+			}
+
+			RectangleF flatLine = new RectangleF(p1.X, p1.Y - thickness/2f, p2.X - p1.X, thickness);
+			float rotation = (p2-p1).ToAngle() - (float)Math.PI/2;
+
+			Debug.WriteLine(rotation - (float)Math.PI/2);
+			//spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, (float)Math.PI/4, Vector2.Zero,
+			//				flatLine.Size, SpriteEffects.None, layerDepth);
+
+
+			spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, rotation, Vector2.Zero,
+							flatLine.Size, SpriteEffects.None, layerDepth);
+
+
+
+		}
+
+
+		public static void LineDraw(SpriteBatch spriteBatch, Vector2 p1, Vector2 p2, int thickness, Color color)
+		{
+			LineDraw(spriteBatch, p1, p2, thickness, color, ActiveDepth);
+		}
+
 
 		public static void CircleDraw(SpriteBatch spriteBatch, Vector2 center, float radius, int thickness, Color color)
 		{

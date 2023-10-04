@@ -228,6 +228,9 @@ namespace StereoGame
 				entity.Draw(spriteBatch);
 			}
 
+			//test : delete me if you see this 
+			SpritedEntity.LineDraw(spriteBatch, new Vector2(100, 100), new Vector2(200, 200), 4, Color.Red, SpritedEntity.ActiveDepth);
+
 
 			//draw collision entities + hitboxes if needed
 			foreach (CollisionEntity collisionEntity in collisionEntitiesList)
