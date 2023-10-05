@@ -228,8 +228,6 @@ namespace StereoGame
 				entity.Draw(spriteBatch);
 			}
 
-			//test : delete me if you see this 
-			SpritedEntity.LineDraw(spriteBatch, new Vector2(100, 100), new Vector2(200, 200), 4, Color.Red, SpritedEntity.ActiveDepth);
 
 
 			//draw collision entities + hitboxes if needed
@@ -256,6 +254,17 @@ namespace StereoGame
 
 							SpritedEntity.CircleDraw(spriteBatch, new Vector2(circHitbox.X, circHitbox.Y),
 													 circHitbox.Radius, DebugHitboxesThickness, Color.LawnGreen);
+						}
+						else if (curHitbox is ConvexPHitbox)
+						{
+							ConvexPHitbox polygon = curHitbox as ConvexPHitbox;
+							int numEdges = polygon.Vertices.Count;
+
+							for (int i = 0; i<numEdges; i++)
+							{
+								SpritedEntity.LineDraw(spriteBatch, polygon.Vertices[i], polygon.Vertices[(i + 1) % numEdges],
+									DebugHitboxesThickness, Color.Crimson);
+							}
 						}
 					}
 				}

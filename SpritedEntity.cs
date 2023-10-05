@@ -216,7 +216,6 @@ namespace StereoGame
 
 		}
 
-
 		public static void LineDraw(SpriteBatch spriteBatch, Vector2 p1, Vector2 p2, int thickness, Color color)
 		{
 			LineDraw(spriteBatch, p1, p2, thickness, color, ActiveDepth);
