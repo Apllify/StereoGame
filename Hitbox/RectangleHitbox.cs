@@ -12,9 +12,18 @@ namespace StereoGame.Hitbox
 {
     public class RectangleHitbox : IHitbox
     {
+        //used for SAT collision resolution calls 
+		public static List<Vector2> RectangleNormals = new List<Vector2>()
+		{
+			new Vector2(0, 1),
+			new Vector2(1, 0)
+		};
 
-        protected RectangleF hitboxRectangle;
+
+		protected RectangleF hitboxRectangle;
         private Vector2 lastFrameMovement;
+
+
 
 
         public RectangleHitbox(float x, float y, float width, float height, SpritedEntity.SpriteAnchor rectangleAnchor)

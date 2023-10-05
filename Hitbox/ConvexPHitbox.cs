@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace StereoGame.Hitbox
 	public class ConvexPHitbox: IHitbox
 	{
 
-		public List<Vector2> Edges { get; private set; }
+		public List<Vector2> Vertices { get; private set; }
 		public List<Vector2> Normals { get; private set; }
 
 
@@ -22,9 +23,9 @@ namespace StereoGame.Hitbox
 		private RectangleF boundingBox;
 		private Vector2 lastMove;
 
-		public ConvexPHitbox(List<Vector2> edges) 
+		public ConvexPHitbox(List<Vector2> vertices) 
 		{
-			Edges = new();
+			Vertices = new();
 			Normals = new();
 
 
@@ -33,7 +34,7 @@ namespace StereoGame.Hitbox
 			lastMove = new Vector2(0, 0);
 
 			//incomplete shape
-			if (edges.Count <= 2)
+			if (vertices.Count <= 2)
 			{
 				return;
 			}
@@ -41,51 +42,50 @@ namespace StereoGame.Hitbox
 
 			//keep track of bounding coordinates on first pass
 			float minX, maxX, minY, maxY;
-			minX = maxX = edges[0].X;
-			minY = maxY = edges[0].Y;
+			minX = maxX = vertices[0].X;
+			minY = maxY = vertices[0].Y;
 
 			//1st PASS : we compute center of mass + bounding box
-			for (int i = 0; i < edges.Count; i++)
+			for (int i = 0; i < vertices.Count; i++)
 			{
-				Vector2 curEdge = edges[i];
+				Vector2 curVertex = vertices[i];
 
 				//check min-max coords
-				if (curEdge.X < minX)
-					minX = curEdge.X;
-				else if (curEdge.X > maxX)
-					maxX = curEdge.X;
+				if (curVertex.X < minX)
+					minX = curVertex.X;
+				else if (curVertex.X > maxX)
+					maxX = curVertex.X;
 
-				if (curEdge.Y < minY)
-					minY = curEdge.Y;
-				else if (curEdge.Y > maxY)
-					maxY = curEdge.Y;
+				if (curVertex.Y < minY)
+					minY = curVertex.Y;
+				else if (curVertex.Y > maxY)
+					maxY = curVertex.Y;
 				
 
-				//add the corresponding normal
-				Normals.Add(edges[i].NormalizedCopy().PerpendicularClockwise());
-
 				//compute center of mass
-				CenterOfMass += edges[i];
+				CenterOfMass += vertices[i];
 
 				//compute bounding box 
 				boundingBox = new RectangleF(minX, minY, maxX - minX, maxY - minY);
 			}
-			CenterOfMass /= edges.Count;
+			CenterOfMass /= vertices.Count;
 
 
+			Vector2 p1 = vertices[0];
+			Vector2 p2 = vertices[1];
+			float expectedCross = Math.Sign( p1.X * p2.Y - p1.Y * p2.X);
 
-			//2nd PASS : we make sure that the shape is convex using center of mass
-			for (int i = 0; i<edges.Count; i++)
+
+			//2nd PASS : we check convexity and compute normal vectors
+			for (int i = 0; i<vertices.Count; i++)
 			{
-				Vector2 toCenter = CenterOfMass - edges[i];
-				Vector2 e1 = edges[(i-1)%edges.Count] - edges[i];
-				Vector2 e2 = edges[i + 1] - edges[i];
+				p1 = vertices[(i-1)>=0 ? (i-1) : ^1 ] - vertices[i];
+				p2 = vertices[(i + 1) % vertices.Count] - vertices[i];
 
-				float a1 = (float) Math.Acos( toCenter.Dot(e1) / (toCenter.Length() * e1.Length()));
-				float a2 = (float) Math.Acos( toCenter.Dot(e2) / (toCenter.Length() * e2.Length()));
+				float cross = Math.Sign(p1.X * p2.Y - p1.Y * p2.X);
 
 				//IF we're not convex, stop control flow (probably foolproof this eventually with out variable in construct)
-				if (a1 + a2 > Math.PI)
+				if (cross != expectedCross)
 				{
 					throw new ArgumentException("Input shape is not convex !");
 				}
@@ -94,8 +94,8 @@ namespace StereoGame.Hitbox
 			}
 
 
-			//save those edges
-			Edges = edges;
+			//save those vertices
+			Vertices = vertices;
 
 		}	
 
@@ -108,9 +108,9 @@ namespace StereoGame.Hitbox
 		{
 			Vector2 offset = new(shiftX, shiftY);
 
-			for (int i = 0; i <  Edges.Count; i++)
+			for (int i = 0; i <  Vertices.Count; i++)
 			{
-				Edges[i] += offset;
+				Vertices[i] += offset;
 			}
 
 			//also shift center of mass + bounding box
@@ -122,10 +122,15 @@ namespace StereoGame.Hitbox
 
 		public IHitbox Shifted(float shiftX, float shiftY)
 		{
-			ConvexPHitbox result = new ConvexPHitbox(Edges);
+			ConvexPHitbox result = new ConvexPHitbox(Vertices);
 			result.Shift(shiftX, shiftY);
 
 			return result;
+		}
+
+		public RectangleF GetBoundingBox()
+		{
+			return boundingBox;
 		}
 
 
@@ -135,19 +140,66 @@ namespace StereoGame.Hitbox
 		}
 
 
+
+		/// <summary>
+		/// Uses the SAT collision resolution algorithm to compute 
+		/// the shortest penetration vector, and returns it.
+		/// </summary>
+		/// <param name="ps1"></param>
+		/// <param name="ps2"></param>
+		/// <param name="normals"></param>
+		/// <returns>The vector such that applying it to e1 gets it out of collision.</returns>
+		public static Vector2 ComputeSAT(List<Vector2> ps1, List<Vector2> ps2, List<Vector2> normals)
+		{
+			//this is where the magic happens
+			return Vector2.Zero;
+		}
+
+
+		public bool Intersects(IHitbox other)
+		{
+			if (other.GetTypeId() > GetTypeId())
+			{
+				return other.Intersects(this);
+			}
+
+			if (other is RectangleHitbox)
+			{
+				//regular sat call
+				List<Vector2> otherVertices = new List<Vector2>() {
+												(Vector2)other.GetBoundingBox().TopLeft,
+												(Vector2)other.GetBoundingBox().TopRight,
+												(Vector2)other.GetBoundingBox().BottomRight,
+												(Vector2)other.GetBoundingBox().BottomLeft
+												};
+
+
+				return ComputeSAT(Vertices, otherVertices,
+								  Normals.Union(RectangleHitbox.RectangleNormals).ToList()) != Vector2.Zero;
+
+			}
+			else if (other is CircleHitbox)
+			{
+
+			}
+			else if (other is ConvexPHitbox)
+			{
+				//just call SAT
+				var otherCPoly = other as ConvexPHitbox;
+
+				return ComputeSAT(Vertices, otherCPoly.Vertices,
+								  Normals.Union(otherCPoly.Normals).ToList()) != Vector2.Zero;
+			}
+
+			return false;
+		}
+
+
 		public Vector2 SolveCollision(IHitbox other)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool Intersects(IHitbox other)
-		{
-			return false;
-		}
 
-		public RectangleF GetBoundingBox()
-		{
-			return boundingBox;
-		}
 	}
 }

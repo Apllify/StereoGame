@@ -35,11 +35,12 @@ namespace StereoGame.Hitbox
 
 		public RectangleF GetBoundingBox();
 
+
 		public bool Intersects(IHitbox other);
 
 
 		/// <summary>
-		/// 
+		/// Computes the resolution of the collision of the two elements, through case analysis.
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns>The smallest normed vector that would get the caller out of collision.
