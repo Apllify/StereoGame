@@ -14,7 +14,7 @@ namespace StereoGame.Hitbox
 	{
 
 		public List<Vector2> Vertices { get; private set; }
-		public List<Vector2> Normals { get; private set; }
+		public HashSet<Vector2> Normals { get; private set; }
 
 
 		public Vector2 CenterOfMass { get; private set; }
@@ -71,15 +71,15 @@ namespace StereoGame.Hitbox
 			CenterOfMass /= vertices.Count;
 
 
-			Vector2 p1 = vertices[0];
-			Vector2 p2 = vertices[1];
+			Vector2 p1 = vertices[0] - vertices[^1];
+			Vector2 p2 = vertices[1] - vertices[0];
 			float expectedCross = Math.Sign( p1.X * p2.Y - p1.Y * p2.X);
 
 
 			//2nd PASS : we check convexity and compute normal vectors
 			for (int i = 0; i<vertices.Count; i++)
 			{
-				p1 = vertices[(i-1)>=0 ? (i-1) : ^1 ] - vertices[i];
+				p1 = vertices[i] - vertices[(i-1)>=0 ? (i-1) : ^1];
 				p2 = vertices[(i + 1) % vertices.Count] - vertices[i];
 
 				float cross = Math.Sign(p1.X * p2.Y - p1.Y * p2.X);
@@ -89,6 +89,13 @@ namespace StereoGame.Hitbox
 				{
 					throw new ArgumentException("Input shape is not convex !");
 				}
+
+				//make sure every normal has a positive x (for easy duplicate checks)
+				Vector2 normal = (p2 - p1).NormalizedCopy().PerpendicularClockwise();
+				if (normal.X < 0)
+					normal *= -1;
+
+				Normals.Add(normal);
 
 
 			}
@@ -151,10 +158,79 @@ namespace StereoGame.Hitbox
 		/// <returns>The vector such that applying it to e1 gets it out of collision.</returns>
 		public static Vector2 ComputeSAT(List<Vector2> ps1, List<Vector2> ps2, List<Vector2> normals)
 		{
-			//this is where the magic happens
-			return Vector2.Zero;
+			Vector2 penetrationVector = Vector2.Zero;
+
+			//this is where the	 magic happens
+			foreach (Vector2 normal in normals)
+			{
+				Segment2 proj1 = ShapeProjection(ps1, normal);
+				Segment2 proj2 = ShapeProjection(ps2, normal);
+
+				float start1Coord = ((Vector2) proj1.Start).Dot(normal);
+				float start2Coord = ((Vector2) proj2.Start).Dot(normal);
+				float maxStartCoord = Math.Max(start1Coord, start2Coord);
+
+
+				float end1Coord = ((Vector2)proj1.End).Dot(normal);
+				float end2Coord = ((Vector2)proj2.End).Dot(normal);
+				float minEndCoord = Math.Min(end1Coord, end2Coord);
+
+				if (minEndCoord < maxStartCoord)
+				{
+					return Vector2.Zero;
+				}
+
+				//apply the proper sign to it depending on the relative positions of both 
+				//(assumption : BOTH shapes are convex)
+				float dirSign = (maxStartCoord == start1Coord) ? 1 : -1;
+
+				//the collision vector on this axis is the intersection of the two projections
+				penetrationVector += (minEndCoord*normal - maxStartCoord*normal) * dirSign;
+
+
+
+
+			}
+
+
+			return penetrationVector;
 		}
 
+
+		/// <summary>
+		/// Projects an entire set of points onto a vector, by computing the union
+		/// of all the individual projections.
+		/// </summary>
+		/// <param name="shape"></param>
+		/// <param name="projAxis"></param>
+		/// <returns></returns>
+		public static Segment2 ShapeProjection(List<Vector2> shape, Vector2 projAxis)
+		{
+
+			Segment2 result = new Segment2(shape[0].ProjectOnto(projAxis), shape[0].ProjectOnto(projAxis)) ;
+			float curMin = shape[0].Dot(projAxis);
+			float curMax = shape[0].Dot(projAxis);
+
+
+			for (int i = 1; i < shape.Count; i++)
+			{
+				float dotProduct = shape[i].Dot(projAxis);
+				
+				if (dotProduct < curMin)
+				{
+					curMin = dotProduct;
+					result.Start = shape[i].ProjectOnto(projAxis);
+				}
+				else if (dotProduct > curMax)
+				{
+					curMax = dotProduct;
+					result.End = shape[i].ProjectOnto(projAxis);
+				}				
+			}
+
+
+			return result;
+		}
 
 		public bool Intersects(IHitbox other)
 		{
@@ -180,7 +256,7 @@ namespace StereoGame.Hitbox
 			}
 			else if (other is CircleHitbox)
 			{
-
+				return false;
 			}
 			else if (other is ConvexPHitbox)
 			{
@@ -197,7 +273,36 @@ namespace StereoGame.Hitbox
 
 		public Vector2 SolveCollision(IHitbox other)
 		{
-			throw new NotImplementedException();
+			if (other is RectangleHitbox)
+			{
+				//regular sat call
+				List<Vector2> otherVertices = new List<Vector2>() {
+												(Vector2)other.GetBoundingBox().TopLeft,
+												(Vector2)other.GetBoundingBox().TopRight,
+												(Vector2)other.GetBoundingBox().BottomRight,
+												(Vector2)other.GetBoundingBox().BottomLeft
+												};
+
+
+				return ComputeSAT(Vertices, otherVertices,
+								  Normals.Union(RectangleHitbox.RectangleNormals).ToList());
+			}
+			else if (other is CircleHitbox)
+			{
+				return Vector2.Zero;
+			}
+			else if (other is ConvexPHitbox)
+			{
+				//just call SAT
+				var otherCPoly = other as ConvexPHitbox;
+
+				return ComputeSAT(Vertices, otherCPoly.Vertices,
+								  Normals.Union(otherCPoly.Normals).ToList());
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 

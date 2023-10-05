@@ -258,12 +258,12 @@ namespace StereoGame
 						else if (curHitbox is ConvexPHitbox)
 						{
 							ConvexPHitbox polygon = curHitbox as ConvexPHitbox;
-							int numEdges = polygon.Vertices.Count;
+							int numVertices = polygon.Vertices.Count;
 
-							for (int i = 0; i<numEdges; i++)
+							for (int i = 0; i<numVertices; i++)
 							{
-								SpritedEntity.LineDraw(spriteBatch, polygon.Vertices[i], polygon.Vertices[(i + 1) % numEdges],
-									DebugHitboxesThickness, Color.Crimson);
+								SpritedEntity.LineDraw(spriteBatch, polygon.Vertices[i], polygon.Vertices[(i + 1) % numVertices],
+									DebugHitboxesThickness, Color.LawnGreen, SpritedEntity.DepthLayer(10));
 							}
 						}
 					}

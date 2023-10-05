@@ -119,6 +119,7 @@ namespace StereoGame
 
 		/// <summary>
 		/// Converts an int in (-inf, +inf) to a depth accepted by sprite batch draw.
+		/// The higher the index, the more to the front it is.
 		/// </summary>
 		/// <param name="layerIndex">
 		/// The draw priority as an int (0 = active layer) (1 = slightly in front) etc...
@@ -204,7 +205,6 @@ namespace StereoGame
 			RectangleF flatLine = new RectangleF(p1.X, p1.Y - thickness/2f, p2.X - p1.X, thickness);
 			float rotation = (p2-p1).ToAngle() - (float)Math.PI/2;
 
-			Debug.WriteLine(rotation - (float)Math.PI/2);
 			//spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, (float)Math.PI/4, Vector2.Zero,
 			//				flatLine.Size, SpriteEffects.None, layerDepth);
 
