@@ -93,9 +93,16 @@ namespace StereoGame.Hitbox
 				//make sure every normal has a positive x (for easy duplicate checks)
 				Vector2 normal = (p2 - p1).NormalizedCopy().PerpendicularClockwise();
 				if (normal.X < 0)
+				{
 					normal *= -1;
+				}
+				else if (normal.X == 0 && normal.Y < 0)
+                {
+					normal *= -1;
+                }
 
-				Normals.Add(normal);
+
+                Normals.Add(normal);
 
 
 			}
@@ -158,7 +165,7 @@ namespace StereoGame.Hitbox
 		/// <returns>The vector such that applying it to e1 gets it out of collision.</returns>
 		public static Vector2 ComputeSAT(List<Vector2> ps1, List<Vector2> ps2, List<Vector2> normals)
 		{
-			Vector2 penetrationVector = Vector2.Zero;
+			Vector2 smallestPenetrationVector = Vector2.Zero;
 
 			//this is where the	 magic happens
 			foreach (Vector2 normal in normals)
@@ -175,25 +182,27 @@ namespace StereoGame.Hitbox
 				float end2Coord = ((Vector2)proj2.End).Dot(normal);
 				float minEndCoord = Math.Min(end1Coord, end2Coord);
 
-				if (minEndCoord < maxStartCoord)
+
+				if (minEndCoord <= maxStartCoord)
 				{
 					return Vector2.Zero;
 				}
 
-				//apply the proper sign to it depending on the relative positions of both 
-				//(assumption : BOTH shapes are convex)
-				float dirSign = (maxStartCoord == start1Coord) ? 1 : -1;
+				Vector2 curPenetrationVector = (minEndCoord * normal - maxStartCoord * normal);
 
 				//the collision vector on this axis is the intersection of the two projections
-				penetrationVector += (minEndCoord*normal - maxStartCoord*normal) * dirSign;
+				if ((smallestPenetrationVector == Vector2.Zero) || curPenetrationVector.Length() < smallestPenetrationVector.Length())
+				{
+					//apply the proper sign to it depending on the relative positions of both 
+					//(assumption : BOTH shapes are convex)
+					float dirSign = (maxStartCoord == start1Coord) ? 1 : -1;
+					smallestPenetrationVector = curPenetrationVector * dirSign;
 
-
-
-
+				}
 			}
 
 
-			return penetrationVector;
+			return smallestPenetrationVector;
 		}
 
 
