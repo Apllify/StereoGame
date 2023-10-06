@@ -215,18 +215,30 @@ namespace StereoGame
 			}
 		}
 
+		public virtual void CustomDraw(SpriteBatch spriteBatch)
+		{
+
+		}
+
 
 		/// <summary>
-		/// Just draw all of the entities
+		/// Draw all entities + handle debug display
 		/// </summary>
 		/// <param name="spriteBatch"></param>
-		public override void Draw(SpriteBatch spriteBatch)
+		public sealed override void Draw(SpriteBatch spriteBatch)
 		{
 			//drawing all held entities
 			foreach (Entity entity in regularEntitiesList)
 			{
-				entity.Draw(spriteBatch);
+				if (entity.IsVisible)
+				{
+					entity.Draw(spriteBatch);
+				}
 			}
+
+
+			//call the scene's custom draw method if applicable
+			CustomDraw(spriteBatch);
 
 
 
@@ -259,6 +271,7 @@ namespace StereoGame
 						{
 							ConvexPHitbox polygon = curHitbox as ConvexPHitbox;
 							int numVertices = polygon.Vertices.Count;
+
 
 							for (int i = 0; i<numVertices; i++)
 							{
