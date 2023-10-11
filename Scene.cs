@@ -178,8 +178,9 @@ namespace StereoGame
 				{
 					CollisionEntity e2 = collisionEntitiesList[j];
 					
-
-					if (e1.GetHitbox().Intersects(e2.GetHitbox()))
+					//use short circuiting
+					if (e1.GetHitbox().GetBoundingBox().Intersects(e2.GetHitbox().GetBoundingBox()) &&
+						e1.GetHitbox().Intersects(e2.GetHitbox()))
 					{
 
 						//don't care about collisions between two static objects
