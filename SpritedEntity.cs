@@ -39,7 +39,6 @@ namespace StereoGame
 		protected Color colorMask;
 		protected float scale = 1;
 
-
 		public float LayerDepth { get; protected set; }
 
 
@@ -193,6 +192,8 @@ namespace StereoGame
 			HRectangleDraw(spriteBatch, location, thickness, color, SpritedEntity.ActiveDepth);
 		}
 
+
+
 		public static void LineDraw(SpriteBatch spriteBatch, Vector2 p1, Vector2 p2, int thickness, Color color, float layerDepth)
 		{
 			//make sure the singular rectangle texture has already been created
@@ -202,14 +203,26 @@ namespace StereoGame
 				SpritedEntity.WhiteRectangle.SetData(new[] { Color.White });
 			}
 
-			RectangleF flatLine = new RectangleF(p1.X, p1.Y - thickness/2f, p2.X - p1.X, thickness);
-			float rotation = (p2-p1).ToAngle() - (float)Math.PI/2;
+			//set values such that p1 is both higher and more to the left than p2 
+			Vector2 realP1 = new Vector2(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y));
+			Vector2 realP2 = new Vector2(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y));
+
+			RectangleF flatLine = new RectangleF(realP1.X, realP1.Y - thickness/2, 
+									new Vector2(realP2.X - realP1.X, realP2.Y - realP1.Y).Length() + thickness, thickness);
+
+
+			float rotation = (realP2 - realP1).ToAngle() - (float)Math.PI/2;
+			
+			//compute the offset to adjust for fact that rotation is centered at bottom left of sprite
+			Vector2 centerOffset = new Vector2(-thickness/2 , 0);
+			centerOffset = centerOffset.Rotate(rotation * 2);
+				
 
 			//spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, (float)Math.PI/4, Vector2.Zero,
 			//				flatLine.Size, SpriteEffects.None, layerDepth);
 
 
-			spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, rotation, Vector2.Zero,
+			spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft + centerOffset, null, color, rotation, Vector2.Zero,
 							flatLine.Size, SpriteEffects.None, layerDepth);
 
 
@@ -220,6 +233,13 @@ namespace StereoGame
 		{
 			LineDraw(spriteBatch, p1, p2, thickness, color, ActiveDepth);
 		}
+
+		public static void LineDraw(SpriteBatch spriteBatch, Segment2 segment, int thickness, Color color, float layerDepth)
+		{
+			LineDraw(spriteBatch, segment.Start, segment.End, thickness, color, layerDepth);
+		}
+
+
 
 
 		public static void CircleDraw(SpriteBatch spriteBatch, Vector2 center, float radius, int thickness, Color color)
