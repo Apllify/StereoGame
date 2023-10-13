@@ -72,7 +72,7 @@ namespace StereoGame.Hitbox
 		/// <param name="lineP2"></param>
 		/// <param name="point"></param>
 		/// <returns>A vector from the line to the argument point</returns>
-		private Vector2 linePointShortest(Vector2 lineP1, Vector2 lineP2, Vector2 point)
+		public static Vector2 LinePointShortest(Vector2 lineP1, Vector2 lineP2, Vector2 point)
 		{
 			//remove edge case 
 			if (lineP1 == lineP2)
@@ -90,64 +90,31 @@ namespace StereoGame.Hitbox
 
 		}
 
-
-		public bool Intersects(IHitbox other)
+		public static Vector2 RectanglePointShortest(RectangleF rec, Vector2 point)
 		{
-			if (other.GetTypeId() > GetTypeId())
-			{
-				return other.Intersects(this);
-			}
+			Vector2 recCenter = rec.Center;
 
-			if (other is CircleHitbox)
-			{
-				CircleHitbox otherCircle = other as CircleHitbox;
-				Vector2 centerToCenter = new Vector2(X - otherCircle.X, Y - otherCircle.Y);
+			//determine closest horizontal and vertical edges of the rectangle
+			//edges are represented in rectangles so 
+			var (verticalLineP1, verticalLineP2) = (point.X > recCenter.X) ?
+										(rec.TopRight, rec.BottomRight) :
+										(rec.TopLeft, rec.BottomLeft);
 
-				return (centerToCenter.Length() < (Radius + otherCircle.Radius));
-			}
-			else if (other is RectangleHitbox)
-			{
-				RectangleF otherHitbox = other.GetBoundingBox();
+			var (horizontalLineP1, horizontalLineP2) = (point.Y > recCenter.Y) ?
+										(rec.BottomRight, rec.BottomLeft) :
+										(rec.TopRight, rec.TopLeft);
 
-				Vector2 circleCenter = new Vector2(X, Y);
+			//compute the shortest paths to the edges now
+			Vector2 vertShortest = LinePointShortest(verticalLineP1, verticalLineP2, point);
+			Vector2 horShortest = LinePointShortest(horizontalLineP1, horizontalLineP2, point);
 
-				//INTERSECTION CASE 1 : the center of the circle is in the rectangle
-				if (otherHitbox.Contains(circleCenter))
-				{
-					return true;
-				}
+			return (vertShortest.Length() > horShortest.Length()) ?
+						horShortest :
+						vertShortest;
 
-				//INTERSECTION CASE 2 : the center of circle is outside the rectangle but still collides
-				Vector2 horizontalLineP1;
-				Vector2 horizontalLineP2;
-
-				Vector2 verticalLineP1;
-				Vector2 verticalLineP2;
-
-				(horizontalLineP1, horizontalLineP2) = (Y > otherHitbox.Y) ?
-							(otherHitbox.BottomRight, otherHitbox.BottomLeft) :
-							(otherHitbox.TopRight, otherHitbox.TopLeft);
-
-
-
-				(verticalLineP1, verticalLineP2) = (X > otherHitbox.X) ?
-											(otherHitbox.TopRight, otherHitbox.BottomRight) :
-											(otherHitbox.TopLeft, otherHitbox.BottomLeft);
-
-
-				//compute the shortest distances to the edges now
-				float vertDistance = linePointShortest(verticalLineP1, verticalLineP2, circleCenter).Length();
-				float horDistance = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter).Length();
-
-
-				//check if one of the distance is smaller than the radius of the circle
-				return (vertDistance < Radius || horDistance < Radius);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
 		}
+
+
 
 		public Vector2 SolveCollision(IHitbox other)
 		{
@@ -179,7 +146,7 @@ namespace StereoGame.Hitbox
 		{
 			Vector2 centerToCenter = new Vector2(X - other.X, Y - other.Y);
 
-			float overlapLength = Math.Abs(centerToCenter.Length() - (Radius + other.Radius));
+			float overlapLength = Math.Max(Radius + other.Radius - centerToCenter.Length(), 0);
 
 			centerToCenter.Normalize();
 			return centerToCenter * overlapLength;
@@ -198,39 +165,29 @@ namespace StereoGame.Hitbox
 			Vector2 circleCenter = new Vector2(X, Y);
 			RectangleF otherHitbox = other.GetBoundingBox();
 
+			//compute the shortest path between the center of the circle and the rec
+			Vector2 penetrationVector = RectanglePointShortest(otherHitbox, circleCenter);
+			float pLength = penetrationVector.Length();
+			penetrationVector.Normalize();
+
+
+			//CASE 0 : no collision
+			if (pLength > Radius)
+			{
+				return Vector2.Zero;
+			}
+
+
 			//CASE 1 : the center of the circle is inside of the rectangle 
 			if (otherHitbox.Contains(circleCenter))
 			{
-				//TODO : get a better algorithm for this 
-				return ((Vector2)otherHitbox.Center - circleCenter) / 10;
+				return (pLength + Radius) * -penetrationVector;
 			}
 
 
 
 			//CASE 2 : the center of the circle is NOT in the rectangle 
-
-			//determine closest horizontal and vertical edges of the rectangle
-			//edges are represented in rectangles so 
-			var (verticalLineP1, verticalLineP2) = (X > otherHitbox.X) ?
-										(otherHitbox.TopRight, otherHitbox.BottomRight) :
-										(otherHitbox.TopLeft, otherHitbox.BottomLeft);
-
-			var (horizontalLineP1, horizontalLineP2) = (circleCenter.Y > otherHitbox.Y) ?
-										(otherHitbox.BottomRight, otherHitbox.BottomLeft) :
-										(otherHitbox.TopRight, otherHitbox.TopLeft);
-
-			//compute the shortest paths to the edges now
-			float vertShortest = linePointShortest(verticalLineP1, verticalLineP2, circleCenter).Length();
-			float horShortest = linePointShortest(horizontalLineP1, horizontalLineP2, circleCenter).Length();
-
-			float finalDisp = Radius - Math.Min(vertShortest, horShortest);
-			Vector2 centerToCenter = circleCenter - (Vector2)otherHitbox.Center;
-
-
-
-
-			//since the vector goes from rec edge to circle, we return the opposite
-			return finalDisp * centerToCenter.NormalizedCopy();
+			return (pLength - Radius) * penetrationVector;
 		}
 
 

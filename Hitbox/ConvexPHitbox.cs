@@ -241,44 +241,6 @@ namespace StereoGame.Hitbox
 			return result;
 		}
 
-		public bool Intersects(IHitbox other)
-		{
-			if (other.GetTypeId() > GetTypeId())
-			{
-				return other.Intersects(this);
-			}
-
-			if (other is RectangleHitbox)
-			{
-				//regular sat call
-				List<Vector2> otherVertices = new List<Vector2>() {
-												(Vector2)other.GetBoundingBox().TopLeft,
-												(Vector2)other.GetBoundingBox().TopRight,
-												(Vector2)other.GetBoundingBox().BottomRight,
-												(Vector2)other.GetBoundingBox().BottomLeft
-												};
-
-
-				return ComputeSAT(Vertices, otherVertices,
-								  Normals.Union(RectangleHitbox.RectangleNormals).ToList()) != Vector2.Zero;
-
-			}
-			else if (other is CircleHitbox)
-			{
-				return false;
-			}
-			else if (other is ConvexPHitbox)
-			{
-				//just call SAT
-				var otherCPoly = other as ConvexPHitbox;
-
-				return ComputeSAT(Vertices, otherCPoly.Vertices,
-								  Normals.Union(otherCPoly.Normals).ToList()) != Vector2.Zero;
-			}
-
-			return false;
-		}
-
 
 		public Vector2 SolveCollision(IHitbox other)
 		{

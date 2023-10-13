@@ -178,9 +178,8 @@ namespace StereoGame
 				{
 					CollisionEntity e2 = collisionEntitiesList[j];
 					
-					//use short circuiting
-					if (e1.GetHitbox().GetBoundingBox().Intersects(e2.GetHitbox().GetBoundingBox()) &&
-						e1.GetHitbox().Intersects(e2.GetHitbox()))
+					//check for bounding box collision first
+					if (e1.GetHitbox().GetBoundingBox().Intersects(e2.GetHitbox().GetBoundingBox()))
 					{
 
 						//don't care about collisions between two static objects
@@ -190,24 +189,30 @@ namespace StereoGame
 						}
 
 
-
-						//call the respective events
-						e1.OnCollision(e2);
-						e2.OnCollision(e1);
-
-
-						//compute which percentage of the displacement each entity will do
-						float w1 = e1.CollisionWeight;
-						float w2 = e2.CollisionWeight;
-
-						float normalConstant = (1 / w1) + (1 / w2);
-						float e1MoveIntensity = (1 / w1) / normalConstant;
-						float e2MoveIntensity = (1 / w2) / normalConstant;
-
+						//perform the proper collision check routine
 						Vector2 penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
 
-						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
-						e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
+						if (penetrationVector != Vector2.Zero)
+						{
+
+							//call the respective events
+							e1.OnCollision(e2);
+							e2.OnCollision(e1);
+
+
+							//compute which percentage of the displacement each entity will do
+							float w1 = e1.CollisionWeight;
+							float w2 = e2.CollisionWeight;
+
+							float normalConstant = (1 / w1) + (1 / w2);
+							float e1MoveIntensity = (1 / w1) / normalConstant;
+							float e2MoveIntensity = (1 / w2) / normalConstant;
+
+
+							e1.ShiftPosition(penetrationVector * e1MoveIntensity);
+							e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
+
+						}
 
 					}
 				}

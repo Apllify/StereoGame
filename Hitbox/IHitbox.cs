@@ -36,7 +36,6 @@ namespace StereoGame.Hitbox
 		public RectangleF GetBoundingBox();
 
 
-		public bool Intersects(IHitbox other);
 
 
 		/// <summary>
@@ -44,7 +43,8 @@ namespace StereoGame.Hitbox
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns>The smallest normed vector that would get the caller out of collision.
-		/// Reversing that vector allows the callee to get out of collision.</returns>
+		/// Reversing that vector allows the callee to get out of collision.
+		/// The return vector is Zero if there is no collision.</returns>
 		public Vector2 SolveCollision(IHitbox other);
 	}
 }

@@ -107,26 +107,6 @@ namespace StereoGame.Hitbox
 
 		}
 
-		public bool Intersects(IHitbox otherHitbox)
-        {
-
-            if (otherHitbox.GetTypeId() > GetTypeId())
-            {
-                return otherHitbox.Intersects(this);
-            }
-            
-            if (otherHitbox is RectangleHitbox)
-            {
-                return hitboxRectangle.Intersects(otherHitbox.GetBoundingBox());
-            }
-			else
-            {
-                throw new NotImplementedException();
-            }
-
-        }
-
-
 
         public Vector2 SolveCollision(IHitbox other)
         {
@@ -159,10 +139,16 @@ namespace StereoGame.Hitbox
             RectangleF selfRec = GetBoundingBox();
             RectangleF otherRec = other.GetBoundingBox();
 
+			RectangleF intersectionRec = selfRec.Intersection(otherRec);
+
+            //CASE 0 : no intersection
+            if (intersectionRec.IsEmpty)
+            {
+                return Vector2.Zero;
+            }
 
 
-            //OVERARCHING CASE 1 : one rectangle is inside the other
-            RectangleF intersectionRec = selfRec.Intersection(otherRec);
+			//OVERARCHING CASE 1 : one rectangle is inside the other
             if (intersectionRec == selfRec|| intersectionRec == otherRec){
 
                 //CASE 1 : we are inside of the other rectangle
