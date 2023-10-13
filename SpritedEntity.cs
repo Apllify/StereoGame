@@ -203,26 +203,22 @@ namespace StereoGame
 				SpritedEntity.WhiteRectangle.SetData(new[] { Color.White });
 			}
 
-			//set values such that p1 is both higher and more to the left than p2 
-			Vector2 realP1 = new Vector2(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y));
-			Vector2 realP2 = new Vector2(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y));
+			//compute width and height of the final segment
+			float lineLength = new Vector2(p2.X - p1.X, p2.Y - p1.Y).Length() + thickness;
+			
 
-			RectangleF flatLine = new RectangleF(realP1.X, realP1.Y - thickness/2, 
-									new Vector2(realP2.X - realP1.X, realP2.Y - realP1.Y).Length() + thickness, thickness);
+			RectangleF flatLine = new RectangleF(p1.X, p1.Y - thickness/2, lineLength, thickness);
 
 
-			float rotation = (realP2 - realP1).ToAngle() - (float)Math.PI/2;
+			float rotation = (p2 - p1).ToAngle() - (float)Math.PI/2;
+
 			
 			//compute the offset to adjust for fact that rotation is centered at bottom left of sprite
-			Vector2 centerOffset = new Vector2(-thickness/2 , 0);
-			centerOffset = centerOffset.Rotate(rotation * 2);
+			Vector2 centerOffset = new Vector2(thickness/(2 * flatLine.Width) , thickness/(2*flatLine.Height));
+
 				
 
-			//spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, (float)Math.PI/4, Vector2.Zero,
-			//				flatLine.Size, SpriteEffects.None, layerDepth);
-
-
-			spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft + centerOffset, null, color, rotation, Vector2.Zero,
+			spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, rotation, centerOffset,
 							flatLine.Size, SpriteEffects.None, layerDepth);
 
 

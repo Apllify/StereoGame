@@ -206,8 +206,6 @@ namespace StereoGame
 
 						Vector2 penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
 
-
-						//TODOOOO SHIFT HERE THE TWO ENTITIES
 						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
 						e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
 
