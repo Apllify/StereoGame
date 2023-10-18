@@ -260,7 +260,34 @@ namespace StereoGame.Hitbox
 			}
 			else if (other is CircleHitbox)
 			{
-				return Vector2.Zero;
+				CircleHitbox otherCirc = other as CircleHitbox;
+				Vector2 circCenter = new(otherCirc.X, otherCirc.Y);
+
+				//compute all the distances between our segments and the circle's center
+				List<Vector2> circleDistances = new();
+
+				for(int i = 0; i < Vertices.Count; i ++)
+				{
+					circleDistances.Add(CircleHitbox.LinePointShortest(Vertices[i], Vertices[(i + 1) % Vertices.Count], circCenter));
+				}
+
+				//get the smallest of those distances
+				circleDistances = circleDistances.OrderBy(x => x.Length()).ToList();
+				Vector2 penetrationVector = circleDistances[0];
+				float pLength = penetrationVector.Length();
+				penetrationVector.Normalize();
+
+				if (pLength > otherCirc.Radius)
+				{
+					return Vector2.Zero;
+				}
+				else
+				{
+					//compute the shortest way to get out ?
+					return (otherCirc.Radius - pLength) * penetrationVector;
+				}
+
+
 			}
 			else if (other is ConvexPHitbox)
 			{
