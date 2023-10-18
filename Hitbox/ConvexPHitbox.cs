@@ -264,18 +264,22 @@ namespace StereoGame.Hitbox
 				Vector2 circCenter = new(otherCirc.X, otherCirc.Y);
 
 				//compute all the distances between our segments and the circle's center
-				List<Vector2> circleDistances = new();
+				Vector2 pVector= CircleHitbox.LinePointShortest(Vertices[^1], Vertices[0], circCenter);
 
-				for(int i = 0; i < Vertices.Count; i ++)
+				for(int i = 0; i < Vertices.Count - 1; i ++)
 				{
-					circleDistances.Add(CircleHitbox.LinePointShortest(Vertices[i], Vertices[(i + 1) % Vertices.Count], circCenter));
+					Vector2 curDist = CircleHitbox.LinePointShortest(
+												   Vertices[i], Vertices[(i + 1) % Vertices.Count], circCenter);
+
+					if (curDist.Length() < pVector.Length())
+					{
+						pVector = curDist;
+					}
 				}
 
 				//get the smallest of those distances
-				circleDistances = circleDistances.OrderBy(x => x.Length()).ToList();
-				Vector2 penetrationVector = circleDistances[0];
-				float pLength = penetrationVector.Length();
-				penetrationVector.Normalize();
+				float pLength = pVector.Length();
+				pVector.Normalize();
 
 				if (pLength > otherCirc.Radius)
 				{
@@ -284,7 +288,7 @@ namespace StereoGame.Hitbox
 				else
 				{
 					//compute the shortest way to get out ?
-					return (otherCirc.Radius - pLength) * penetrationVector;
+					return (otherCirc.Radius - pLength) * pVector;
 				}
 
 
