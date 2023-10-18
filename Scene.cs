@@ -178,8 +178,8 @@ namespace StereoGame
 				{
 					CollisionEntity e2 = collisionEntitiesList[j];
 					
-
-					if (e1.GetHitbox().Intersects(e2.GetHitbox()))
+					//check for bounding box collision first
+					if (e1.GetHitbox().GetBoundingBox().Intersects(e2.GetHitbox().GetBoundingBox()))
 					{
 
 						//don't care about collisions between two static objects
@@ -189,44 +189,61 @@ namespace StereoGame
 						}
 
 
-
-						//call the respective events
-						e1.OnCollision(e2);
-						e2.OnCollision(e1);
-
-
-						//compute which percentage of the displacement each entity will do
-						float w1 = e1.CollisionWeight;
-						float w2 = e2.CollisionWeight;
-
-						float normalConstant = (1 / w1) + (1 / w2);
-						float e1MoveIntensity = (1 / w1) / normalConstant;
-						float e2MoveIntensity = (1 / w2) / normalConstant;
-
+						//perform the proper collision check routine
 						Vector2 penetrationVector = e1.GetHitbox().SolveCollision(e2.GetHitbox());
 
+						if (penetrationVector != Vector2.Zero)
+						{
 
-						//TODOOOO SHIFT HERE THE TWO ENTITIES
-						e1.ShiftPosition(penetrationVector * e1MoveIntensity);
-						e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
+							//call the respective events
+							e1.OnCollision(e2);
+							e2.OnCollision(e1);
+
+
+							//compute which percentage of the displacement each entity will do
+							float w1 = e1.CollisionWeight;
+							float w2 = e2.CollisionWeight;
+
+							float normalConstant = (1 / w1) + (1 / w2);
+							float e1MoveIntensity = (1 / w1) / normalConstant;
+							float e2MoveIntensity = (1 / w2) / normalConstant;
+
+
+							e1.ShiftPosition(penetrationVector * e1MoveIntensity);
+							e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
+
+						}
 
 					}
 				}
 			}
 		}
 
+		public virtual void CustomDraw(SpriteBatch spriteBatch)
+		{
+
+		}
+
 
 		/// <summary>
-		/// Just draw all of the entities
+		/// Draw all entities + handle debug display
 		/// </summary>
 		/// <param name="spriteBatch"></param>
-		public override void Draw(SpriteBatch spriteBatch)
+		public sealed override void Draw(SpriteBatch spriteBatch)
 		{
 			//drawing all held entities
 			foreach (Entity entity in regularEntitiesList)
 			{
-				entity.Draw(spriteBatch);
+				if (entity.IsVisible)
+				{
+					entity.Draw(spriteBatch);
+				}
 			}
+
+
+			//call the scene's custom draw method if applicable
+			CustomDraw(spriteBatch);
+
 
 
 			//draw collision entities + hitboxes if needed
@@ -253,6 +270,18 @@ namespace StereoGame
 
 							SpritedEntity.CircleDraw(spriteBatch, new Vector2(circHitbox.X, circHitbox.Y),
 													 circHitbox.Radius, DebugHitboxesThickness, Color.LawnGreen);
+						}
+						else if (curHitbox is ConvexPHitbox)
+						{
+							ConvexPHitbox polygon = curHitbox as ConvexPHitbox;
+							int numVertices = polygon.Vertices.Count;
+
+
+							for (int i = 0; i<numVertices; i++)
+							{
+								SpritedEntity.LineDraw(spriteBatch, polygon.Vertices[i], polygon.Vertices[(i + 1) % numVertices],
+									DebugHitboxesThickness, Color.LawnGreen, SpritedEntity.DepthLayer(10));
+							}
 						}
 					}
 				}

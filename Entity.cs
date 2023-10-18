@@ -13,6 +13,8 @@ namespace StereoGame
 	{
 		public String Tag { get; protected set; }
 		public float TimeScale { get; private set; } = 1;
+		public bool IsVisible { get; set; } = true;
+
 
 		public enum EntityEvent
 		{

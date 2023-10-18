@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -33,6 +34,8 @@ namespace StereoGame
 		private KeyboardState lastState;
 		private KeyboardState curState;
 
+		private MouseState curMouseState;
+
 		
 
 		public static void Initialize()
@@ -59,6 +62,8 @@ namespace StereoGame
 		{
 			lastState = Keyboard.GetState();
 			curState = Keyboard.GetState();
+
+			curMouseState = Mouse.GetState();
 		}
 
 		public void Update()
@@ -117,6 +122,12 @@ namespace StereoGame
 		public bool IsKeyUp(Keys key)
 		{
 			return !IsKeyDown(key);
+		}
+
+
+		public Vector2 GetMousePos()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
