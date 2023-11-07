@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -29,19 +30,30 @@ namespace StereoGame
 			ChangeHitbox
 		}
 
+		public static Vector2 VirtualResolution { get; set; }
+
 
 		//Non-static members
 		private KeyboardState lastState;
 		private KeyboardState curState;
 
+		private MouseState lastMouseState;
 		private MouseState curMouseState;
+
+		private GraphicsDevice gd;
 
 		
 
-		public static void Initialize()
+		public static void Initialize(GraphicsDevice gd, Vector2 virtualResolution)
 		{
-			//CHANGE THE MAPPINGS HERE 
-			ActionMapping = new Dictionary<Action , List<Keys>>()
+
+            if ( CurrentHandler != null) 
+            {
+				return;
+            }
+
+            //CHANGE THE MAPPINGS HERE 
+            ActionMapping = new Dictionary<Action , List<Keys>>()
 			{
 				{Action.DebugToggle, new List<Keys>() {Keys.NumPad1 } },
 
@@ -55,21 +67,28 @@ namespace StereoGame
 
 
 			//create the input handler instance
-			CurrentHandler = new InputHandler();
+			VirtualResolution = virtualResolution;
+			CurrentHandler = new InputHandler(gd);
 		}
 
-		public InputHandler()
+		public InputHandler(GraphicsDevice _gd)
 		{
 			lastState = Keyboard.GetState();
 			curState = Keyboard.GetState();
 
+			lastMouseState = Mouse.GetState();
 			curMouseState = Mouse.GetState();
+
+			gd = _gd;
 		}
 
 		public void Update()
 		{
 			lastState = curState;
 			curState = Keyboard.GetState();
+
+			lastMouseState = curMouseState;
+			curMouseState = Mouse.GetState();
 		}
 
 
@@ -124,10 +143,28 @@ namespace StereoGame
 			return !IsKeyDown(key);
 		}
 
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns>Coordinates of the mouse w.r.t the virtual resolution.</returns>
 		public Vector2 GetMousePos()
 		{
-			throw new NotImplementedException();
+			Vector2 virtualPos = new();
+
+			float screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+			float screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+
+			virtualPos.X = ((float)curMouseState.X / screenWidth)
+						   * VirtualResolution.X;
+			virtualPos.Y = ((float)curMouseState.Y / screenHeight)
+						   * VirtualResolution.Y;
+
+
+
+			Debug.WriteLine(screenWidth);
+
+			return virtualPos;
+
 		}
 	}
 }
