@@ -17,6 +17,5 @@ namespace StereoGame.Particles
 		public Vector2 NextPosition();
 
 		public void NextPosition(out float x, out float y);
-
 	}
 }
