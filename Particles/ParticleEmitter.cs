@@ -46,8 +46,8 @@ namespace StereoGame.Particles
 		{
 			ParticleTemplate p = new()
 			{
-				minVelocity = 4,
-				maxVelocity = 5
+				MinVelocity = 4,
+				MaxVelocity = 5
 			}
 				;
 		}

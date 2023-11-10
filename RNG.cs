@@ -11,6 +11,10 @@ namespace StereoGame
 	{
 		public static Random currentRNG;
 
+		/// <summary>
+		/// Called by the top level game file before creating 
+		/// any scenes or entities.
+		/// </summary>
 		public static void Initialize()
 		{
 			currentRNG = new Random();

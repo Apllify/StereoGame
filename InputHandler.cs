@@ -31,6 +31,8 @@ namespace StereoGame
 		}
 
 		public static Vector2 VirtualResolution { get; set; }
+		public static float GameWidth {	get => VirtualResolution.X; }
+		public static float GameHeight {  get => VirtualResolution.Y; }
 
 
 		//Non-static members
