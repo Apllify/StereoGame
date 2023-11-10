@@ -25,6 +25,11 @@ namespace StereoGame
 
 		//instance members
 		private Vector2 position;
+		public Vector2 Position
+		{
+			get => position;
+			set => ShiftPosition(value - position);
+		}
 
 		protected Texture2D sprite;
 

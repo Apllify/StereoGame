@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using StereoGame.Hitbox;
 using StereoGame.Particles.ParticleShapes;
 using System;
@@ -15,6 +16,14 @@ namespace StereoGame.TestScenes
 {
 	public class BallCollisions : Scene
 	{
+
+		private const float dirChangeInterval = 2f;
+		private float dirChangeTimer = 0;
+		private Vector2 windDirection = new Vector2(1, 1).NormalizedCopy();
+		private float windStrength = 40;
+
+		private List<CollisionEntity> ballsList = new();
+
 		public BallCollisions():
 			base()
 		{
@@ -23,10 +32,8 @@ namespace StereoGame.TestScenes
 
 		public override void Load()
 		{
-			Texture2D ball = SpriteLoader.LoadTexture2D("Ball");
+			Texture2D ballSprite = SpriteLoader.LoadTexture2D("Ball");
 			CircleHitbox hitbox = new(0, 0, 10);
-			SpritedEntity.SpriteAnchor centerAnchor = SpritedEntity.SpriteAnchor.Center;
-			SpritedEntity.SpriteAnchor topLeftAnchor = SpritedEntity.SpriteAnchor.TopLeft;
 
 
 			//create many radius=10 balls in random locations
@@ -35,8 +42,9 @@ namespace StereoGame.TestScenes
 			{
 				(x,  y) = (RNG.NextFloat(InputHandler.GameWidth), 
 						   RNG.NextFloat(InputHandler.GameHeight));
-
-				AddCollisionEntity(new(new(x, y), hitbox.Shifted(x, y), null, centerAnchor));
+				CollisionEntity ball = new(new(x, y), hitbox.Shifted(x, y), null);
+				ballsList.Add(ball);
+				AddCollisionEntity(ball);
 			}
 
 
@@ -59,16 +67,24 @@ namespace StereoGame.TestScenes
 				AddCollisionEntity(current);
 			}
 
-			//add the player 
-			AddCollisionEntity(new Player(200, 100));
-
-
-
 		}
 
 		protected override void CustomUpdate(GameTime gameTime)
 		{
+			//update wind direction if applicable
+			dirChangeTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+			if (dirChangeTimer >= dirChangeInterval)
+			{
+				dirChangeTimer = 0f;
+				windDirection = windDirection.PerpendicularClockwise();
+			}
+
+			//move all balls
+			foreach (CollisionEntity ce in ballsList)
+			{
+				ce.ShiftPosition((float)gameTime.ElapsedGameTime.TotalSeconds * windStrength * windDirection);
+			}
 		}
 	}
 

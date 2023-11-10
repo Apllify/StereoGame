@@ -14,6 +14,7 @@ using StereoGame;
 using StereoGame.Hitbox;
 
 using act = StereoGame.InputHandler.Action;
+using System.Collections.ObjectModel;
 
 namespace StereoGame
 {
@@ -21,6 +22,24 @@ namespace StereoGame
 	{
 		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
+
+
+		/// <summary>
+		/// WARNING : performance may be bad.
+		/// </summary>
+		public ReadOnlyCollection<Entity> RegularEntitiesList
+		{
+			get => regularEntitiesList.AsReadOnly();
+		}
+
+		/// <summary>
+		/// Read only version of the list, should NOT be 
+		/// used on every frame because performance.
+		/// </summary>
+		public ReadOnlyCollection<CollisionEntity> CollisionEntitiesList
+		{
+			get => collisionEntitiesList.AsReadOnly();
+		}
 
 
 		public bool DebugModeEnabled = true;

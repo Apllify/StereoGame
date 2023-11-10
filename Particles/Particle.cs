@@ -49,7 +49,7 @@ namespace StereoGame.Particles
 		/// </summary>
 		public static Particle FromTemplate(ParticleTemplate template)
 		{
-			Particle p;
+			Particle p;	
 			float velocity = RNG.NextFloat(template.MinVelocity, template.MaxVelocity);
 			float size = template.Size;
 			float lifeSpan = RNG.NextFloat(template.MinLifeSpan, template.MaxLifeSpan);
