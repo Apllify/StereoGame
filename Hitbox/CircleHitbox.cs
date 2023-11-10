@@ -181,7 +181,7 @@ namespace StereoGame.Hitbox
 			//CASE 1 : the center of the circle is inside of the rectangle 
 			if (otherHitbox.Contains(circleCenter))
 			{
-				return (pLength + Radius) * -penetrationVector;
+				return (pLength + Radius) * penetrationVector;
 			}
 
 

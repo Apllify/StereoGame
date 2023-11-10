@@ -220,8 +220,6 @@ namespace StereoGame
 			spriteBatch.Draw(WhiteRectangle, flatLine.TopLeft, null, color, rotation, centerOffset,
 							flatLine.Size, SpriteEffects.None, layerDepth);
 
-
-
 		}
 
 		public static void LineDraw(SpriteBatch spriteBatch, Vector2 p1, Vector2 p2, int thickness, Color color)

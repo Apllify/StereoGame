@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StereoGame.Hitbox;
+using StereoGame.Particles.ParticleShapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,14 +23,13 @@ namespace StereoGame.TestScenes
 
 		public override void Load()
 		{
-			//create many 10 radius balls in random locations
 			Texture2D ball = SpriteLoader.LoadTexture2D("Ball");
 			CircleHitbox hitbox = new(0, 0, 10);
 			SpritedEntity.SpriteAnchor centerAnchor = SpritedEntity.SpriteAnchor.Center;
 			SpritedEntity.SpriteAnchor topLeftAnchor = SpritedEntity.SpriteAnchor.TopLeft;
 
 
-
+			//create many radius=10 balls in random locations
 			float x, y;
 			for(int i = 0; i<100; i++)
 			{
@@ -41,16 +41,23 @@ namespace StereoGame.TestScenes
 
 
 			//create edges for the scene
-			//RectangleHitbox topBound, bottomBound, leftBound, rightBound;
-			//topBound = new(0, -20, InputHandler.GameWidth, 20);
-			//bottomBound = new(0, InputHandler.GameHeight, InputHandler.GameWidth, 20);
-			//leftBound = new(-20, 0, 20, InputHandler.GameHeight);
-			//rightBound = new(InputHandler.GameWidth, 0, 20, InputHandler.GameHeight);
+			RectangleHitbox topBound, bottomBound, leftBound, rightBound;
+			topBound = new(0, -20, InputHandler.GameWidth, 20);
+			bottomBound = new(0, InputHandler.GameHeight, InputHandler.GameWidth, 20);
+			leftBound = new(-20, 0, 20, InputHandler.GameHeight);
+			rightBound = new(InputHandler.GameWidth, 0, 20, InputHandler.GameHeight);
+			List<IHitbox> boundaries = new()
+			{
+				topBound, bottomBound, leftBound, rightBound
+			};
 
-			//AddCollisionEntity(new(new(), topBound, null, centerAnchor));
-			//AddCollisionEntity(new(new(), bottomBound, null, centerAnchor));
-			//AddCollisionEntity(new(new(), leftBound, null, centerAnchor));
-			//AddCollisionEntity(new(new(), rightBound, null, centerAnchor));
+			foreach(IHitbox recHitbox in boundaries)
+			{
+				CollisionEntity current = new(new(), recHitbox, null);
+				current.CollisionWeight = float.PositiveInfinity;
+
+				AddCollisionEntity(current);
+			}
 
 			//add the player 
 			AddCollisionEntity(new Player(200, 100));

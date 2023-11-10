@@ -40,7 +40,7 @@ namespace StereoGame.Hitbox
         }
 
         public RectangleHitbox(float x, float y, float _width, float _height) :
-            this(x, y, _width, _height, SpritedEntity.SpriteAnchor.Center) { }
+            this(x, y, _width, _height, SpritedEntity.SpriteAnchor.TopLeft) { }
 
         public RectangleHitbox(RectangleF startingState):
             this(startingState.X, startingState.Y, startingState.Width, startingState.Height,

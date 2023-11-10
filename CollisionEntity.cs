@@ -58,6 +58,10 @@ namespace StereoGame
 			this(position, _hitbox, _sprite, _spriteAnchor, SpritedEntity.ActiveDepth)
 		{ }
 
+		public CollisionEntity(Vector2 position, IHitbox _hitbox, Texture2D _sprite) :
+			this(position, _hitbox, _sprite, SpriteAnchor.Center)
+		{ }
+
 		public CollisionEntity(float x, float y, IHitbox _hitbox, Texture2D _sprite, SpriteAnchor _spriteAnchor) :
 			this(new Vector2(x, y), _hitbox, _sprite, _spriteAnchor, SpritedEntity.ActiveDepth)
 		{ }
