@@ -43,6 +43,17 @@ namespace StereoGame.Particles
 		}
 
 
+		/// <summary>
+		/// Creates a particle using the information from a ParticleTemplate (see the 
+		/// latter for more information).
+		/// </summary>
+		public static Particle FromTemplate(ParticleTemplate template)
+		{
+			Particle p;
+			float size = template.Size;
+			float lifeSpan = RNG.NextFloat(template.MinLifeSpan, template.MaxLifeSpan);
+		}
+
 		public void Update(GameTime gameTime)
 		{
 			float deltaT = gameTime.ElapsedGameTime.Seconds;
