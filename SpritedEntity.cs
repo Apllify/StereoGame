@@ -165,7 +165,6 @@ namespace StereoGame
 				color, 0f, Vector2.Zero, location.Size,
 				SpriteEffects.None, layerDepth);
 		}
-
 		public static void RectangleDraw(SpriteBatch spriteBatch, RectangleF location, Color color)
 		{
 			RectangleDraw(spriteBatch, location, color, SpritedEntity.ActiveDepth);
