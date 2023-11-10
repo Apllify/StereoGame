@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
+using StereoGame.Extras;
+using StereoGame.Extensions;
+using Microsoft.Xna.Framework.Graphics;
+
 using MonoGame.Extended;
 
 namespace StereoGame.Particles
 {
-	public class Particle
+	public class Particle 
 	{
 
 		public Vector2 Position { get; set; }
@@ -22,8 +26,8 @@ namespace StereoGame.Particles
 		public float Size { get; set; }
 		public float GrowthRate { get; set; }
 
-		public Color pColor; //must be field since struct
-		public Color PColorGradient { get; set; } = Color.Black;
+		private ColorF pColor; //must be field since struct
+		public ColorF PColorGradient { get; set; } = new ColorF(0, 0, 0);
 
 
 
@@ -35,7 +39,7 @@ namespace StereoGame.Particles
 						float lifespan, float growthRate, Color color)
 		{
 			(Position, Velocity, Acceleration, Lifespan, GrowthRate, pColor) = 
-				(pos, velocity, acceleration, lifespan, growthRate, color);
+				(pos, velocity, acceleration, lifespan, growthRate, color.ToColorF());
 		}
 
 
@@ -55,11 +59,17 @@ namespace StereoGame.Particles
 
 			Size += GrowthRate * deltaT;
 
-			//TODO : finish me 
+			//use incremental color
+			pColor += PColorGradient;
 
-			
 		}
 
+		public void Draw(SpriteBatch spriteBatch)
+		{
+			//for now, all particles are just squares
+			//might want to optimize this to improve max particle count
+			SpritedEntity.RectangleDraw(spriteBatch, new RectangleF(Position, new Size2(Size, Size)), pColor.ToColor());
+		}
 
 	}
 }
