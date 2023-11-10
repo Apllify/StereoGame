@@ -21,8 +21,8 @@ namespace StereoGame
 		}
 
 
-		/// <param name="low">Inclusive lower bound</param>
-		/// <param name="high">Exclusive upper bound</param>
+		/// <param name="min">Inclusive lower bound</param>
+		/// <param name="max">Exclusive upper bound</param>
 		public static int NextInt(int min, int max) 
 			=> currentRNG.Next(min, max);
 

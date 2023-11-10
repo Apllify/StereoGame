@@ -16,11 +16,12 @@ namespace StereoGame.Particles
 	public class Particle 
 	{
 
-		public Vector2 Position { get; set; }
-		public Vector2 Velocity { get; set; }
-		public Vector2 Acceleration { get; set; } = Vector2.Zero;
+		private Action<Particle> destroyer;
 
-		public bool IsAlive { get; set; } = true;
+		public Vector2 Position { get; set; }
+		public Vector2 MoveDirection { get; set; }
+		public float Velocity { get; set; } = 0;
+		public float Acceleration { get; set; } = 0;
 
 		public float Lifespan { get; set; }
 		public float Size { get; set; }
@@ -35,11 +36,19 @@ namespace StereoGame.Particles
 		/// Creates a particles with given properties.
 		/// See property documentation for more info.
 		/// </summary>
-		public Particle(Vector2 pos, Vector2 velocity, Vector2 acceleration, 
-						float lifespan, float size, float growthRate, Color color)
+		public Particle(Action<Particle> _destroyer, Vector2 pos, Vector2 movDir, float velocity, float acceleration, 
+						float lifespan, float size, float growthRate, ColorF color)
 		{
-			(Position, Velocity, Acceleration, Size, Lifespan, GrowthRate, pColor) = 
-				(pos, velocity, acceleration, size, lifespan, growthRate, color.ToColorF());
+			destroyer = _destroyer;
+
+			Position = pos;
+			MoveDirection = (movDir == Vector2.Zero) ? Vector2.Zero : movDir.NormalizedCopy();
+			
+			(Velocity, Acceleration) = (velocity, acceleration);
+			(Size, GrowthRate) = (size, growthRate);
+
+			Lifespan = lifespan;
+			pColor = color;
 		}
 
 
@@ -47,15 +56,29 @@ namespace StereoGame.Particles
 		/// Creates a particle using the information from a ParticleTemplate (see the 
 		/// latter for more information).
 		/// </summary>
-		public static Particle FromTemplate(ParticleTemplate template)
+		public static Particle FromTemplate(Action<Particle> destroyer, ParticleTemplate template)
 		{
-			Particle p;	
+			Particle p;
+
+			//assigns every single field accordingly
+			//only missing fields are position, and movement dir (not part of template)
 			float velocity = RNG.NextFloat(template.MinVelocity, template.MaxVelocity);
-			float size = template.Size;
+			float acceleration = template.Acceleration;
+
 			float lifeSpan = RNG.NextFloat(template.MinLifeSpan, template.MaxLifeSpan);
 
-			//TODO : finish me 
-			return null;
+			float size = template.Size;
+			float growthRate = template.GrowthRate;
+
+			ColorF pcolor = template.PColor;
+			ColorF pcolorGradient = template.PColorGradient;
+
+
+			//set the fields that aren't part of the constructor separately
+			p = new Particle(destroyer, new(), new(), velocity, acceleration, lifeSpan, size, growthRate, pcolor);
+			p.PColorGradient = pcolorGradient;
+			
+			return p;
 
 		}
 
@@ -67,11 +90,11 @@ namespace StereoGame.Particles
 
 			if (Lifespan <= 0f)
 			{
-				IsAlive = false;
+				destroyer(this);
 			}
 
 			Velocity += Acceleration * deltaT;
-			Position += Velocity * deltaT;
+			Position += MoveDirection * Velocity * deltaT;
 
 			Size += GrowthRate * deltaT;
 

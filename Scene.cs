@@ -33,8 +33,7 @@ namespace StereoGame
 		}
 
 		/// <summary>
-		/// Read only version of the list, should NOT be 
-		/// used on every frame because performance.
+		/// WARNING : performance may be bad.
 		/// </summary>
 		public ReadOnlyCollection<CollisionEntity> CollisionEntitiesList
 		{
