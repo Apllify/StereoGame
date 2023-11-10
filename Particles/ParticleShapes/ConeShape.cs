@@ -10,6 +10,10 @@ using MonoGame.Extended;
 
 namespace StereoGame.Particles.ParticleShapes
 {
+	/// <summary>
+	/// A "cone" shape which looks like a set "slice" of a disc.
+	/// In the case of angle = 2 pi, the shape is simply a filled disc/2D circle.
+	/// </summary>
 	public class ConeShape : ParticleShape
 	{
 		Vector2 Center { get;  set; }
@@ -40,7 +44,7 @@ namespace StereoGame.Particles.ParticleShapes
 			float curAngle = RNG.NextFloat(Angle);
 			float curLength = RNG.NextFloat(Radius);
 
-			Vector2 curPoint = (curLength * Direction).Rotate(curAngle);
+			Vector2 curPoint = curLength * Direction.Rotate(curAngle) + Center;
 			(x, y) = (curPoint.X, curPoint.Y);
 		}
 	}

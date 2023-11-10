@@ -14,7 +14,7 @@ namespace StereoGame.Particles
 	public abstract class ParticleShape
 	{
 		/// <summary>
-		/// Computes and stores a position within the enclosed shape
+		/// Computes and stores a position within the enclosed shape.
 		/// MUST be implemented by any children of this class 
 		/// </summary>
 		/// <param name="x">Variable for x coordinate</param>

@@ -36,10 +36,10 @@ namespace StereoGame.Particles
 		/// See property documentation for more info.
 		/// </summary>
 		public Particle(Vector2 pos, Vector2 velocity, Vector2 acceleration, 
-						float lifespan, float growthRate, Color color)
+						float lifespan, float size, float growthRate, Color color)
 		{
-			(Position, Velocity, Acceleration, Lifespan, GrowthRate, pColor) = 
-				(pos, velocity, acceleration, lifespan, growthRate, color.ToColorF());
+			(Position, Velocity, Acceleration, Size, Lifespan, GrowthRate, pColor) = 
+				(pos, velocity, acceleration, size, lifespan, growthRate, color.ToColorF());
 		}
 
 
@@ -64,6 +64,11 @@ namespace StereoGame.Particles
 
 		}
 
+
+		/// <summary>
+		/// For now, all particles are just squares
+		/// Might consider optimizing in the future.
+		/// </summary>
 		public void Draw(SpriteBatch spriteBatch)
 		{
 			//for now, all particles are just squares
