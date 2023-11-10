@@ -247,11 +247,11 @@ namespace StereoGame.Hitbox
 			if (other is RectangleHitbox)
 			{
 				//regular sat call
-				List<Vector2> otherVertices = new List<Vector2>() {
-												(Vector2)other.GetBoundingBox().TopLeft,
-												(Vector2)other.GetBoundingBox().TopRight,
-												(Vector2)other.GetBoundingBox().BottomRight,
-												(Vector2)other.GetBoundingBox().BottomLeft
+				List<Vector2> otherVertices = new(){
+												other.GetBoundingBox().TopLeft,
+												other.GetBoundingBox().TopRight,
+												other.GetBoundingBox().BottomRight,
+												other.GetBoundingBox().BottomLeft
 												};
 
 

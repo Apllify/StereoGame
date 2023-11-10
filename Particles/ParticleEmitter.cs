@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -17,6 +18,8 @@ namespace StereoGame.Particles
 		private List<Particle> particles;
 		private ParticleShape emissionShape;
 		private ParticleShape receptionShape;
+
+		private List<Particle> deadParticles;
 		public ParticleTemplate ParticleTemp { get; set; }
 		public float EmissionDelay { get; set; }
 		public int EmissionCount { get; set; }
@@ -38,18 +41,11 @@ namespace StereoGame.Particles
 			emissionShape = _emissionShape;
 			receptionShape = _receptionshape;
 
+			deadParticles = new();
+
 			ParticleTemp = particleTemplate;
 			EmissionDelay = emissionDelay;
 			EmissionCount = emissionCount;
-		}
-
-		/// <summary>
-		/// Passed in to child particles so that they have
-		/// a way of killing themselves
-		/// </summary>
-		public void RemoveParticle(Particle p)
-		{
-			particles.Remove(p);
 		}
 
 		protected override void CustomUpdate(GameTime gameTime)
@@ -66,7 +62,7 @@ namespace StereoGame.Particles
 				for (int i = 0; i< EmissionCount; i++)
 				{
 					//create the particle from template
-					Particle newP = Particle.FromTemplate(RemoveParticle, ParticleTemp);
+					Particle newP = Particle.FromTemplate(ParticleTemp);
 
 					//add position and direction information
 					Vector2 source, destination;
@@ -74,9 +70,30 @@ namespace StereoGame.Particles
 					destination = receptionShape.NextPosition();
 
 					newP.Position = source;
-					newP.MoveDirection = (destination - source).NormalizedCopy(); 
+					newP.MoveDirection = (destination - source).NormalizedCopy();
+
+
+					//add particle to list
+					particles.Add(newP);
 				}
 			}
+
+			//update all particles + remove dead ones
+			deadParticles.Clear();
+			foreach(Particle p in particles)
+			{
+				p.Update(gameTime);
+
+				if (p.IsDead)
+					deadParticles.Add(p);
+			}
+
+			foreach(Particle dp in deadParticles)
+			{
+				particles.Remove(dp);
+			}
+
+		
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)

@@ -163,8 +163,6 @@ namespace StereoGame
 
 
 
-			Debug.WriteLine(screenWidth);
-
 			return virtualPos;
 
 		}

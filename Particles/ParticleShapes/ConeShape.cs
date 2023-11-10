@@ -44,7 +44,7 @@ namespace StereoGame.Particles.ParticleShapes
 			float curAngle = RNG.NextFloat(Angle);
 			float curLength = RNG.NextFloat(Radius);
 
-			Vector2 curPoint = curLength * Direction.Rotate(curAngle) + Center;
+			Vector2 curPoint = (curLength * Direction.Rotate(curAngle)) + Center;
 			(x, y) = (curPoint.X, curPoint.Y);
 		}
 	}

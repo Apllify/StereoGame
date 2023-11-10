@@ -10,25 +10,28 @@ using StereoGame.Extensions;
 using Microsoft.Xna.Framework.Graphics;
 
 using MonoGame.Extended;
+using System.Diagnostics;
 
 namespace StereoGame.Particles
 {
 	public class Particle 
 	{
 
-		private Action<Particle> destroyer;
 
 		public Vector2 Position { get; set; }
 		public Vector2 MoveDirection { get; set; }
 		public float Velocity { get; set; } = 0;
 		public float Acceleration { get; set; } = 0;
 
+		public bool IsDead { get; set; } = false;
+
 		public float Lifespan { get; set; }
 		public float Size { get; set; }
 		public float GrowthRate { get; set; }
 
 		private ColorF pColor; //must be field since struct
-		public ColorF PColorGradient { get; set; } = new ColorF(0, 0, 0);
+		private float fadeout; //induce a fade out effect over time
+		public ColorF PColorGradient { get; set; } = new ColorF(0, 0, 0, 0);
 
 
 
@@ -36,10 +39,9 @@ namespace StereoGame.Particles
 		/// Creates a particles with given properties.
 		/// See property documentation for more info.
 		/// </summary>
-		public Particle(Action<Particle> _destroyer, Vector2 pos, Vector2 movDir, float velocity, float acceleration, 
+		public Particle(Vector2 pos, Vector2 movDir, float velocity, float acceleration, 
 						float lifespan, float size, float growthRate, ColorF color)
 		{
-			destroyer = _destroyer;
 
 			Position = pos;
 			MoveDirection = (movDir == Vector2.Zero) ? Vector2.Zero : movDir.NormalizedCopy();
@@ -49,6 +51,7 @@ namespace StereoGame.Particles
 
 			Lifespan = lifespan;
 			pColor = color;
+			fadeout = pColor.A / lifespan;
 		}
 
 
@@ -56,7 +59,7 @@ namespace StereoGame.Particles
 		/// Creates a particle using the information from a ParticleTemplate (see the 
 		/// latter for more information).
 		/// </summary>
-		public static Particle FromTemplate(Action<Particle> destroyer, ParticleTemplate template)
+		public static Particle FromTemplate(ParticleTemplate template)
 		{
 			Particle p;
 
@@ -75,7 +78,7 @@ namespace StereoGame.Particles
 
 
 			//set the fields that aren't part of the constructor separately
-			p = new Particle(destroyer, new(), new(), velocity, acceleration, lifeSpan, size, growthRate, pcolor);
+			p = new Particle(new(), new(), velocity, acceleration, lifeSpan, size, growthRate, pcolor);
 			p.PColorGradient = pcolorGradient;
 			
 			return p;
@@ -84,13 +87,13 @@ namespace StereoGame.Particles
 
 		public void Update(GameTime gameTime)
 		{
-			float deltaT = gameTime.ElapsedGameTime.Seconds;
+			float deltaT = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
 			Lifespan -= deltaT;
 
 			if (Lifespan <= 0f)
 			{
-				destroyer(this);
+				IsDead = true;
 			}
 
 			Velocity += Acceleration * deltaT;
@@ -99,7 +102,8 @@ namespace StereoGame.Particles
 			Size += GrowthRate * deltaT;
 
 			//use incremental color
-			pColor += PColorGradient;
+			//pColor += PColorGradient;
+			pColor = new(pColor.R, pColor.G, pColor.B, pColor.Alpha - fadeout * deltaT);
 
 		}
 
