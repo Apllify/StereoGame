@@ -29,9 +29,10 @@ namespace StereoGame.Particles
 		public float Size { get; set; }
 		public float GrowthRate { get; set; }
 
-		private ColorF pColor; //must be field since struct
+		private ColorF pColor  = Color.White.ToColorF(); //starting particle color
+		private Vector3 colorMove; //evolution of pcolor over time 
+
 		private float fadeout; //induce a fade out effect over time
-		public ColorF PColorGradient { get; set; } = new ColorF(0, 0, 0, 0);
 
 
 
@@ -40,7 +41,7 @@ namespace StereoGame.Particles
 		/// See property documentation for more info.
 		/// </summary>
 		public Particle(Vector2 pos, Vector2 movDir, float velocity, float acceleration, 
-						float lifespan, float size, float growthRate, ColorF color)
+						float lifespan, float size, float growthRate, ColorF startColor, ColorF? endColor)
 		{
 
 			Position = pos;
@@ -50,7 +51,15 @@ namespace StereoGame.Particles
 			(Size, GrowthRate) = (size, growthRate);
 
 			Lifespan = lifespan;
-			pColor = color;
+			
+			//color related things
+			pColor = startColor;
+			ColorF endPColor = (endColor.HasValue) ? endColor.Value : pColor;
+
+			colorMove = new Vector3(endPColor.R - pColor.R,
+									endPColor.G - pColor.G,
+									endPColor.B - pColor.B);
+			colorMove /= lifespan;
 			fadeout = pColor.A / lifespan;
 		}
 
@@ -73,13 +82,14 @@ namespace StereoGame.Particles
 			float size = template.Size;
 			float growthRate = template.GrowthRate;
 
-			ColorF pcolor = template.PColor;
-			ColorF pcolorGradient = template.PColorGradient;
+			//end color guaranteed to have value 
+			ColorF startC = template.StartPColor;
+			ColorF? endC = template.EndPColor;
 
 
-			//set the fields that aren't part of the constructor separately
-			p = new Particle(new(), new(), velocity, acceleration, lifeSpan, size, growthRate, pcolor);
-			p.PColorGradient = pcolorGradient;
+			
+			p = new Particle(new(), new(), velocity, acceleration, 
+							 lifeSpan, size, growthRate, startC, endC);
 			
 			return p;
 
@@ -102,8 +112,8 @@ namespace StereoGame.Particles
 			Size += GrowthRate * deltaT;
 
 			//use incremental color
-			//pColor += PColorGradient;
-			pColor = new(pColor.R, pColor.G, pColor.B, pColor.Alpha - fadeout * deltaT);
+			pColor += colorMove * deltaT;
+			pColor.Alpha -= fadeout * deltaT;
 
 		}
 
@@ -116,7 +126,8 @@ namespace StereoGame.Particles
 		{
 			//for now, all particles are just squares
 			//might want to optimize this to improve max particle count
-			SpritedEntity.RectangleDraw(spriteBatch, new RectangleF(Position, new Size2(Size, Size)), pColor.ToColor());
+			SpritedEntity.RectangleDraw(spriteBatch, new RectangleF(Position, new Size2(Size, Size)), 
+										pColor.ToColor(), SpritedEntity.DepthLayer(20));
 		}
 
 	}

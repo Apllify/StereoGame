@@ -20,8 +20,8 @@ namespace StereoGame.Particles
 		public float MaxVelocity = 0;
 		public float Acceleration = 0;
 
-		public ColorF PColor = Color.White.ToColorF();
-		public ColorF PColorGradient = Color.Black.ToColorF();
+		public ColorF StartPColor = Color.White.ToColorF();
+		public ColorF? EndPColor = null;
 
 		public float MinLifeSpan = 0.3f;
 		public float MaxLifeSpan = 1;

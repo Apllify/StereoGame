@@ -48,21 +48,35 @@ namespace StereoGame.Extras
 			this(red/255f, green/255f, blue/255f)
 		{ }
 		
-		public static ColorF operator +(ColorF c1, ColorF c2)
-		{
-			return new ColorF(c1.Red + c2.Red,
-							  c1.Green + c2.Green,
-							  c1.Blue + c2.Blue,
-							  c1.Alpha + c2.Alpha);
-		}
 
+		//Operator overloads
+		public static ColorF operator +(ColorF c1, ColorF c2)
+			=> new ColorF(c1.R + c2.R,
+						  c1.G + c2.G,
+						  c1.B + c2.B,
+						  c1.A + c2.A);
+
+		public static ColorF operator +(ColorF c, Vector3 v)
+			=> new ColorF(c.R + v.X,
+						  c.G + v.Y,
+						  c.B + v.Z,
+						  c.A);
+		public static ColorF operator +(Vector3 v, ColorF c)
+			=> c + v;
+
+		public static ColorF operator *(ColorF c1, float l)
+			=> new(c1.R * l, c1.G * l, c1.B * l);
+
+		public static ColorF operator *(float l, ColorF c1)
+			=> c1 * l;
+		
+
+		//Conversion to built-in monogame color type
 		public static explicit operator Color(ColorF c)
 			=> new Color(c.Red, c.Green, c.Blue, c.Alpha);
 
 		public Color ToColor()
-		{
-			return (Color)this;
-		}
+			=> (Color)this;
 
 	}
 }
