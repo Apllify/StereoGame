@@ -18,7 +18,6 @@ namespace StereoGame
 		public static InputHandler CurrentHandler { get; set; }
 
 		public static Dictionary<Action, List<Keys>> ActionMapping { get; set; }
-
 		public enum Action
 		{
 			DebugToggle,
@@ -153,8 +152,8 @@ namespace StereoGame
 		{
 			Vector2 virtualPos = new();
 
-			float screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-			float screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+			float screenWidth = gd.PresentationParameters.BackBufferWidth;
+			float screenHeight = gd.PresentationParameters.BackBufferHeight;
 
 			virtualPos.X = ((float)curMouseState.X / screenWidth)
 						   * VirtualResolution.X;

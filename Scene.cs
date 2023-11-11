@@ -280,14 +280,15 @@ namespace StereoGame
 						if (curHitbox is RectangleHitbox){
 							SpritedEntity.HRectangleDraw(spriteBatch, curHitbox.GetBoundingBox(), 
 								DebugHitboxesThickness, Color.LawnGreen, 
-								collisionEntity.LayerDepth - SpritedEntity.DepthStep);
+								SpritedEntity.DepthLayer(100));
 						}
 						else if (curHitbox is CircleHitbox)
 						{
 							CircleHitbox circHitbox = curHitbox as CircleHitbox;
 
 							SpritedEntity.CircleDraw(spriteBatch, new Vector2(circHitbox.X, circHitbox.Y),
-													 circHitbox.Radius, DebugHitboxesThickness, Color.LawnGreen);
+													 circHitbox.Radius, DebugHitboxesThickness, Color.LawnGreen, 
+													 SpritedEntity.DepthLayer(100));
 						}
 						else if (curHitbox is ConvexPHitbox)
 						{
@@ -298,7 +299,7 @@ namespace StereoGame
 							for (int i = 0; i<numVertices; i++)
 							{
 								SpritedEntity.LineDraw(spriteBatch, polygon.Vertices[i], polygon.Vertices[(i + 1) % numVertices],
-									DebugHitboxesThickness, Color.LawnGreen, SpritedEntity.DepthLayer(10));
+									DebugHitboxesThickness, Color.LawnGreen, SpritedEntity.DepthLayer(100));
 							}
 						}
 					}

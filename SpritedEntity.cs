@@ -122,7 +122,7 @@ namespace StereoGame
 
 
 		/// <summary>
-		/// Converts an int in (-inf, +inf) to a depth accepted by sprite batch draw.
+		/// Converts an int in [-500, +500] to a depth accepted by sprite batch draw.
 		/// The higher the index, the more to the front it is.
 		/// </summary>
 		/// <param name="layerIndex">
@@ -240,7 +240,7 @@ namespace StereoGame
 
 
 
-		public static void CircleDraw(SpriteBatch spriteBatch, Vector2 center, float radius, int thickness, Color color)
+		public static void CircleDraw(SpriteBatch spriteBatch, Vector2 center, float radius, int thickness, Color color, float layerDepth)
 		{
 			//make sure the singular rectangle texture has already been created
 			if (SpritedEntity.WhiteRectangle == null)
@@ -263,9 +263,12 @@ namespace StereoGame
 				Vector2 offset = new Vector2(curX, curY);
 
 				spriteBatch.Draw(SpritedEntity.WhiteRectangle, center + offset - (scale / 2), null, color, 
-								 0, Vector2.Zero, scale, SpriteEffects.None, ForegroundDepth );
+								 0, Vector2.Zero, scale, SpriteEffects.None, layerDepth);
 			}
 		}
+
+		public static void CircleDraw(SpriteBatch spriteBatch, Vector2 center, float radius, int thickness, Color color)
+			=> CircleDraw(spriteBatch, center, radius, thickness, color, ActiveDepth);
 
 		public static void SpriteDraw(SpriteBatch spriteBatch, Vector2 drawPosition, Texture2D sprite, SpriteAnchor spriteAnchor, float layerDepth, Color colorMask, float scale)
 		{

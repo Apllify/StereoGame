@@ -13,9 +13,10 @@ namespace StereoGame.Particles.ParticleShapes
 		public float X { get; set; }
 		public float Y { get; set; }
 		public PointShape(float x, float y)
-		{
-			(X, Y) = (x,y);
-		}
+			=> (X, Y) = (x,y);
+		public PointShape(Vector2 v) :
+			this(v.X, v.Y)
+		{ }
 
 		/// <summary>
 		/// Just returns the same point every-time

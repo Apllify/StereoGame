@@ -5,16 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
-using StereoGame.Extras;
 using StereoGame.Extensions;
 using Microsoft.Xna.Framework.Graphics;
 
 using MonoGame.Extended;
 using System.Diagnostics;
+using UnfinishedBusinessman.StereoGame.Extensions;
 
 namespace StereoGame.Particles
 {
-	public class Particle 
+    public class Particle 
 	{
 
 

@@ -6,15 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
-using StereoGame.Extras;
+using UnfinishedBusinessman.StereoGame.Extensions;
 
 namespace StereoGame.Extensions
 {
 
-	/// <summary>
-	/// Provides shorthand for working with colors
-	/// </summary>
-	public static class ColorExtensions
+    /// <summary>
+    /// Provides shorthand for working with colors
+    /// </summary>
+    public static class ColorExtensions
 	{
 		public static void Add(this Color c1, Color c2)
 		{

@@ -5,16 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
-using StereoGame.Extras;
 using StereoGame.Extensions;
+using UnfinishedBusinessman.StereoGame.Extensions;
 
 namespace StereoGame.Particles
 {
-	/// <summary>
-	/// A data record which encapsulates a range of possible
-	/// particles. Used as an input to a particle emitter.
-	/// </summary>
-	public record class ParticleTemplate
+    /// <summary>
+    /// A data record which encapsulates a range of possible
+    /// particles. Used as an input to a particle emitter.
+    /// </summary>
+    public record class ParticleTemplate
 	{
 		public float MinVelocity = 0;
 		public float MaxVelocity = 0;
