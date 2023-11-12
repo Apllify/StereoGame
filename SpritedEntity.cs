@@ -214,7 +214,7 @@ namespace StereoGame
 			RectangleF flatLine = new RectangleF(p1.X, p1.Y - thickness/2, lineLength, thickness);
 
 
-			float rotation = (p2 - p1).ToAngle() - (float)Math.PI/2;
+			float rotation = (p2 - p1).ToAngle() - MathF.PI/2;
 
 			
 			//compute the offset to adjust for fact that rotation is centered at bottom left of sprite
@@ -256,9 +256,9 @@ namespace StereoGame
 
 			for (int angle = 0; angle < angleCount; angle++)
 			{
-				float curRot = (float) (((float)angle / angleCount) * Math.PI * 2);
-				float curX = (float)Math.Cos(curRot) * radius;
-				float curY = (float)Math.Sin(curRot) * radius;
+				float curRot = (float) (((float)angle / angleCount) * MathF.PI * 2);
+				float curX = MathF.Cos(curRot) * radius;
+				float curY = MathF.Sin(curRot) * radius;
 
 				Vector2 offset = new Vector2(curX, curY);
 

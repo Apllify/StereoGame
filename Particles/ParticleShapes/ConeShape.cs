@@ -31,7 +31,7 @@ namespace StereoGame.Particles.ParticleShapes
 			Direction.Normalize();
 
 			Radius = radius;
-			Angle = (float)Math.Clamp((double)angle, 0, 2 * Math.PI);
+			Angle = Math.Clamp(angle, 0, 2 * MathF.PI);
 		}
 
 

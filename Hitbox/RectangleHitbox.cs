@@ -175,7 +175,7 @@ namespace StereoGame.Hitbox
 
 
                     //determine whether we need a diagonal or straight displacement
-                    if (exitVector.ToAngle() % Math.PI/4 == 0) //straight
+                    if (exitVector.ToAngle() % MathF.PI/4 == 0) //straight
                     {
                         exitVector *= verDistance;
                         exitVector *= horDistance;
