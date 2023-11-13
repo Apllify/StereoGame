@@ -11,10 +11,11 @@ using System.Threading.Tasks;
 
 using UnfinishedBusinessman;
 using UnfinishedBusinessman.Entities.Characters;
+using StereoGame.Entities;
 
 namespace StereoGame.TestScenes
 {
-	public class BallCollisions : Scene
+    public class BallCollisions : Scene
 	{
 
 		private const float dirChangeInterval = 2f;

@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.Collections;
 
-namespace UnfinishedBusinessman.StereoGame.Extensions
+namespace StereoGame.Extensions
 {
 
     /// <summary>
+    /// WARNING  : this is a mutable struct.
     /// An alternative to Monogame.Color which internally represents the channels
     /// as floats, useful for incrementing colors by small amounts while retaining 
     /// performance.
@@ -28,7 +29,6 @@ namespace UnfinishedBusinessman.StereoGame.Extensions
 
         public float Alpha { get; set; }
         public float A { get => Alpha; set => Alpha = value; }
-
 
         public ColorF(float red, float green, float blue, float alpha)
         {

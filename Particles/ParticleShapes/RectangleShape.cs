@@ -24,7 +24,7 @@ namespace StereoGame.Particles.ParticleShapes
 
 		public RectangleShape(RectangleF rec) :
 			this(rec.Left, rec.Right, rec.Top, rec.Bottom)
-		{ }
+		{		}
 
 		public void NextPosition(out float x, out float y)
 		{

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using StereoGame.Extensions;
-using UnfinishedBusinessman.StereoGame.Extensions;
+using StereoGame.Extensions;
 
 namespace StereoGame.Particles
 {

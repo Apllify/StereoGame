@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using StereoGame.Entities;
 
 namespace StereoGame.Particles
 {
-	public class ParticleEmitter : Entity
+    public class ParticleEmitter : Entity
 	{
 
 		private List<Particle> particles;

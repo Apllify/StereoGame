@@ -10,7 +10,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 using MonoGame.Extended;
 using System.Diagnostics;
-using UnfinishedBusinessman.StereoGame.Extensions;
+using StereoGame.Extensions;
+using StereoGame.Entities;
 
 namespace StereoGame.Particles
 {
@@ -59,7 +60,9 @@ namespace StereoGame.Particles
 			colorMove = new Vector3(endPColor.R - pColor.R,
 									endPColor.G - pColor.G,
 									endPColor.B - pColor.B);
-			colorMove /= lifespan;
+
+			//color transition should be done at half-life
+			colorMove /= lifespan/2; 
 			fadeout = pColor.A / lifespan;
 		}
 

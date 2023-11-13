@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StereoGame.Entities;
 
 namespace StereoGame.Toolbox
 {
-	public class CustomCursor : SpritedEntity
+    public class CustomCursor : SpritedEntity
 	{
 		public Texture2D Sprite { get; set; }
 
