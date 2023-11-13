@@ -10,11 +10,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StereoGame;
 using StereoGame.Hitbox;
 
 using act = StereoGame.InputHandler.Action;
 using System.Collections.ObjectModel;
+using StereoGame.Entities;
 
 namespace StereoGame
 {
@@ -195,8 +195,14 @@ namespace StereoGame
 				for (int j = i+1; j< collisionEntitiesList.Count; j++)
 				{
 					CollisionEntity e2 = collisionEntitiesList[j];
+
+					//start by checking for grid coordinate collision (cheapest check)
+					if (((e1.GridXPos & e2.GridXPos) | (e1.GridYPos & e2.GridYPos)) == 0u)
+					{
+						continue;
+					}
 					
-					//check for bounding box collision first
+					//next, check for bounding box collision
 					if (e1.GetHitbox().GetBoundingBox().Intersects(e2.GetHitbox().GetBoundingBox()))
 					{
 
@@ -282,17 +288,14 @@ namespace StereoGame
 								DebugHitboxesThickness, Color.LawnGreen, 
 								SpritedEntity.DepthLayer(100));
 						}
-						else if (curHitbox is CircleHitbox)
+						else if (curHitbox is CircleHitbox circHitbox)
 						{
-							CircleHitbox circHitbox = curHitbox as CircleHitbox;
-
 							SpritedEntity.CircleDraw(spriteBatch, new Vector2(circHitbox.X, circHitbox.Y),
 													 circHitbox.Radius, DebugHitboxesThickness, Color.LawnGreen, 
 													 SpritedEntity.DepthLayer(100));
 						}
-						else if (curHitbox is ConvexPHitbox)
+						else if (curHitbox is ConvexPHitbox polygon)
 						{
-							ConvexPHitbox polygon = curHitbox as ConvexPHitbox;
 							int numVertices = polygon.Vertices.Count;
 
 
