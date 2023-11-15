@@ -20,17 +20,9 @@ namespace StereoGame
 {
     public class Scene : Entity
 	{
-		private List<Entity> regularEntitiesList;
+		private HashSet<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
-
-		/// <summary>
-		/// WARNING : performance may be bad.
-		/// </summary>
-		public ReadOnlyCollection<Entity> RegularEntitiesList
-		{
-			get => regularEntitiesList.AsReadOnly();
-		}
 
 		/// <summary>
 		/// WARNING : performance may be bad.
@@ -56,7 +48,7 @@ namespace StereoGame
 		///</summary>
 		public Scene()
 		{
-			regularEntitiesList = new List<Entity>();
+			regularEntitiesList = new HashSet<Entity>();
 			collisionEntitiesList = new List<CollisionEntity>();
 		}
 
