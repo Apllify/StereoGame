@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using UnfinishedBusinessman;
 
 namespace StereoGame
@@ -24,6 +25,8 @@ namespace StereoGame
 		protected SpriteBatch _spriteBatch;
 		protected RenderTarget2D _renderTarget;
 
+
+		private Dictionary<String, List<Keys>> actionMapping;
 		private Scene currentScene;
 
 		/// <summary>
@@ -31,10 +34,12 @@ namespace StereoGame
 		/// </summary>
 		/// <param name="virtualWidth">The game width (independent of window width)</param>
 		/// <param name="virtualHeight">The game height (independent of window height)</param>
-		public GameMaster(int virtualWidth, int virtualHeight):
+		public GameMaster(int virtualWidth, int virtualHeight, 
+						  Dictionary<String, List<Keys>> _actionMapping):
 			base()
 		{
 			(VirtualWidth, VirtualHeight) = (virtualWidth, virtualHeight);
+			actionMapping = _actionMapping;
 
 			_graphics = new GraphicsDeviceManager(this);
 			Window.AllowUserResizing = true;
@@ -55,6 +60,9 @@ namespace StereoGame
 		protected override void Initialize()
 		{
 			_renderTarget = new RenderTarget2D(GraphicsDevice, VW, VH);
+
+
+
 			base.Initialize();
 		}
 
@@ -63,7 +71,7 @@ namespace StereoGame
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			SpriteLoader.InitializeSpriteLoader(Content);
-			InputHandler.Initialize(GraphicsDevice, new(VW, VH));
+			InputHandler.Initialize(GraphicsDevice, new Vector2(VW, VH), actionMapping);
 			RNG.Initialize();
 
 			base.LoadContent();

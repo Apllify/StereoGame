@@ -17,17 +17,7 @@ namespace StereoGame
 		//Static members
 		public static InputHandler CurrentHandler { get; set; }
 
-		public static Dictionary<Action, List<Keys>> ActionMapping { get; set; }
-		public enum Action
-		{
-			DebugToggle,
-
-			MoveUp,
-			MoveDown,
-			MoveRight,
-			MoveLeft,
-			ChangeHitbox
-		}
+		//every string represents some action like "move"
 
 		public static Vector2 VirtualResolution { get; set; }
 		public static float GameWidth {	get => VirtualResolution.X; }
@@ -35,6 +25,8 @@ namespace StereoGame
 
 
 		//Non-static members
+		private static Dictionary<String, List<Keys>> actionMapping { get; set; }
+
 		private KeyboardState lastState;
 		private KeyboardState curState;
 
@@ -45,7 +37,8 @@ namespace StereoGame
 
 		
 
-		public static void Initialize(GraphicsDevice gd, Vector2 virtualResolution)
+		public static void Initialize(GraphicsDevice gd, Vector2 virtualResolution, 
+								      Dictionary<String, List<Keys>> actionMapping)
 		{
 
             if ( CurrentHandler != null) 
@@ -53,26 +46,12 @@ namespace StereoGame
 				return;
             }
 
-            //CHANGE THE MAPPINGS HERE 
-            ActionMapping = new Dictionary<Action , List<Keys>>()
-			{
-				{Action.DebugToggle, new List<Keys>() {Keys.NumPad1 } },
-
-				{Action.MoveUp, new List<Keys>(){Keys.Z} },
-				{Action.MoveDown, new List<Keys>(){Keys.S} },
-				{Action.MoveRight, new List<Keys>(){Keys.D} },
-				{Action.MoveLeft, new List<Keys>(){Keys.Q } },
-
-				{Action.ChangeHitbox, new List<Keys>(){ Keys.Space } }
-			};
-
-
 			//create the input handler instance
 			VirtualResolution = virtualResolution;
-			CurrentHandler = new InputHandler(gd);
+			CurrentHandler = new InputHandler(gd, actionMapping);
 		}
 
-		public InputHandler(GraphicsDevice _gd)
+		public InputHandler(GraphicsDevice _gd, Dictionary<String, List<Keys>> _actionMapping)
 		{
 			lastState = Keyboard.GetState();
 			curState = Keyboard.GetState();
@@ -81,6 +60,13 @@ namespace StereoGame
 			curMouseState = Mouse.GetState();
 
 			gd = _gd;
+
+			actionMapping = _actionMapping;
+		}
+
+		public bool AddAction(String actionName, List<Keys> actions)
+		{
+			return actionMapping.TryAdd(actionName, actions);
 		}
 
 		public void Update()
@@ -92,10 +78,14 @@ namespace StereoGame
 			curMouseState = Mouse.GetState();
 		}
 
-		public bool IsActionDown(Action action)
+
+		/// <summary>
+		/// Returns false if no action with this name exists
+		/// </summary>
+		public bool IsActionDown(String action)
 		{
 			List<Keys> keys;
-			ActionMapping.TryGetValue(action, out keys);
+			actionMapping.TryGetValue(action, out keys);
 
 			if (keys == null)
 				return false;
@@ -112,22 +102,15 @@ namespace StereoGame
 		}
 
 		/// <summary>
-		/// Returns false if action name doesn't exist
+		/// Returns false if no action with this name exists
 		/// </summary>
-		public bool IsActionDown(String action)
+		public bool IsActionJustDown(String action)
 		{
-			Action parsedAction;
-			bool status = Enum.TryParse<Action>(action, out parsedAction);
+			List<Keys> keys;
+			actionMapping.TryGetValue(action, out keys);
 
-			if (status)
-				return IsActionDown(parsedAction);
-			else
+			if (keys == null)
 				return false;
-		}
-
-		public bool IsActionJustDown(Action action)
-		{
-			List<Keys> keys = ActionMapping[action];
 
 			foreach (Keys key in keys)
 			{
@@ -141,38 +124,13 @@ namespace StereoGame
 		}
 
 		/// <summary>
-		/// Returns false if action name doesn't exist
+		/// Returns *true* if no action with this name exists
 		/// </summary>
-		public bool IsActionJustDown(String action)
-		{
-			Action parsedAction;
-			bool status = Enum.TryParse<Action>(action, out parsedAction);
-
-			if (status)
-				return IsActionJustDown(parsedAction);
-			else
-				return false;
-		}
-
-
-		public bool IsActionUp(Action action)
+		public bool IsActionUp(String action)
 		{
 			return !IsActionDown(action);
 		}
 
-		/// <summary>
-		/// Returns false if action name doesn't exist
-		/// </summary>
-		public bool IsActionUp(String action)
-		{
-			Action parsedAction;
-			bool status = Enum.TryParse<Action>(action, out parsedAction);
-
-			if (status)
-				return IsActionUp(parsedAction);
-			else
-				return false;
-		}
 
 
 		public bool IsKeyDown(Keys key)

@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using StereoGame.Hitbox;
 
-using act = StereoGame.InputHandler.Action;
 using System.Collections.ObjectModel;
 using StereoGame.Entities;
 
@@ -58,7 +57,8 @@ namespace StereoGame
 		/// </summary>
 		public virtual void Load()
 		{
-			
+			//set some hardcoded mappings
+			InputHandler.CurrentHandler.AddAction("DebugToggle", new() { Keys.F });
 		}
 
 		/// <summary>
@@ -128,7 +128,7 @@ namespace StereoGame
 
 
 			//if debug enabled, allow the user to use debug keys
-			if (DebugModeEnabled && InputHandler.CurrentHandler.IsActionJustDown(act.DebugToggle))
+			if (DebugModeEnabled && InputHandler.CurrentHandler.IsActionJustDown("DebugToggle"))
 			{
 				ShowHitboxes ^= true;
 			}
