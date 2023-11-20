@@ -111,12 +111,12 @@ namespace StereoGame.Particles
 
 			Velocity += Acceleration * deltaT;
 			Position += MoveDirection * Velocity * deltaT;
-
+			
 			Size += GrowthRate * deltaT;
 
 			//use incremental color
-			pColor += colorMove * deltaT;
-			pColor.Alpha -= fadeout * deltaT;
+			ColorF.Increment(ref pColor, colorMove * deltaT);
+			ColorF.Increment(ref pColor, new Vector4(0, 0, 0, - fadeout * deltaT));		
 
 		}
 

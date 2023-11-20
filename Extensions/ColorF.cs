@@ -18,24 +18,43 @@ namespace StereoGame.Extensions
     /// </summary>
     public struct ColorF
     {
-        public float Red { get; set; }
+
+        private float red = 0;
+        public float Red { 
+            get => red; 
+            set => red = Math.Clamp(value, 0, 1); 
+        }
         public float R { get => Red; set => Red = value; }
 
-        public float Green { get; set; }
+        private float green = 0;
+        public float Green
+        {
+			get => green;
+			set => green = Math.Clamp(value, 0, 1);
+		}
         public float G { get => Green; set => Green = value; }
 
-        public float Blue { get; set; }
+
+        private float blue = 0;
+        public float Blue { 
+            get => blue; 
+            set => blue = Math.Clamp(value, 0, 1); 
+        }
         public float B { get => Blue; set => Blue = value; }
 
-        public float Alpha { get; set; }
+        private float alpha = 0;
+        public float Alpha { 
+            get => alpha; 
+            set => alpha = Math.Clamp(value, 0, 1); 
+        }
         public float A { get => Alpha; set => Alpha = value; }
 
-        public ColorF(float red, float green, float blue, float alpha)
+        public ColorF(float _red, float _green, float _blue, float _alpha)
         {
-            Red = Math.Clamp(red, 0, 1);
-            Green = Math.Clamp(green, 0, 1);
-            Blue = Math.Clamp(blue, 0, 1);
-            Alpha = Math.Clamp(alpha, 0, 1);
+            Red = _red;
+            Green = _green;
+            Blue = _blue;
+            Alpha = _alpha;
         }
 
         public ColorF(float red, float green, float blue) :
@@ -71,6 +90,26 @@ namespace StereoGame.Extensions
 
         public static ColorF operator *(float l, ColorF c1)
             => c1 * l;
+
+
+        /// <summary>
+        /// Fastest way to increment fields of struct
+        /// </summary>
+        public static void Increment(ref ColorF color, Vector4 move)
+        {
+            color.R += move.X;
+            color.G += move.Y;
+            color.B += move.Z;
+            color.A += move.W;
+        }
+
+		/// <summary>
+		/// Fastest way to increment fields of struct
+		/// </summary>
+		public static void Increment(ref ColorF color, Vector3 move)
+        {
+            Increment(ref color, new Vector4(move, 0));
+        }
 
 
         //Conversion to built-in monogame color type

@@ -178,7 +178,6 @@ namespace StereoGame
 
 
 			//detecting then correcting collisions
-			//TODO : find a more optimized detection algorithm
 			for (int i = 0; i < collisionEntitiesList.Count-1; i++)
 			{
 
@@ -227,7 +226,6 @@ namespace StereoGame
 
 							e1.ShiftPosition(penetrationVector * e1MoveIntensity);
 							e2.ShiftPosition(-penetrationVector * e2MoveIntensity);
-
 						}
 
 					}

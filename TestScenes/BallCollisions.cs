@@ -21,7 +21,12 @@ namespace StereoGame.TestScenes
 		private const float dirChangeInterval = 2f;
 		private float dirChangeTimer = 0;
 		private Vector2 windDirection = new Vector2(1, 1).NormalizedCopy();
-		private float windStrength = 40;
+		private float windStrength = 70;
+
+
+		const int BallCount = 300;
+		const int BallRadius = 4;
+
 
 		private List<CollisionEntity> ballsList = new();
 
@@ -34,12 +39,12 @@ namespace StereoGame.TestScenes
 		public override void Load()
 		{
 			Texture2D ballSprite = SpriteLoader.LoadTexture2D("Ball");
-			CircleHitbox hitbox = new(0, 0, 10);
+			CircleHitbox hitbox = new(0, 0, BallRadius);
 
 
 			//create many radius=10 balls in random locations
 			float x, y;
-			for(int i = 0; i<100; i++)
+			for(int i = 0; i<BallCount; i++)
 			{
 				(x,  y) = (RNG.NextFloat(InputHandler.GameWidth), 
 						   RNG.NextFloat(InputHandler.GameHeight));

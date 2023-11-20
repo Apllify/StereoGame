@@ -16,11 +16,11 @@ namespace StereoGame.Particles
     public class ParticleEmitter : Entity
 	{
 
-		private List<Particle> particles;
+		private HashSet<Particle> particles;
 		private ParticleShape emissionShape;
 		private ParticleShape receptionShape;
 
-		private List<Particle> deadParticles;
+		private HashSet<Particle> deadParticles;
 		public ParticleTemplate ParticleTemp { get; set; }
 		public float EmissionDelay { get; set; }
 		public int EmissionCount { get; set; }
