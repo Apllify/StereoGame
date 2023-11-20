@@ -92,11 +92,13 @@ namespace StereoGame
 			curMouseState = Mouse.GetState();
 		}
 
-
 		public bool IsActionDown(Action action)
 		{
-			List<Keys> keys = ActionMapping[action];
+			List<Keys> keys;
+			ActionMapping.TryGetValue(action, out keys);
 
+			if (keys == null)
+				return false;
 
 			foreach (Keys key in keys)
 			{
@@ -107,6 +109,20 @@ namespace StereoGame
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Returns false if action name doesn't exist
+		/// </summary>
+		public bool IsActionDown(String action)
+		{
+			Action parsedAction;
+			bool status = Enum.TryParse<Action>(action, out parsedAction);
+
+			if (status)
+				return IsActionDown(parsedAction);
+			else
+				return false;
 		}
 
 		public bool IsActionJustDown(Action action)
@@ -124,10 +140,40 @@ namespace StereoGame
 			return false;
 		}
 
+		/// <summary>
+		/// Returns false if action name doesn't exist
+		/// </summary>
+		public bool IsActionJustDown(String action)
+		{
+			Action parsedAction;
+			bool status = Enum.TryParse<Action>(action, out parsedAction);
+
+			if (status)
+				return IsActionJustDown(parsedAction);
+			else
+				return false;
+		}
+
+
 		public bool IsActionUp(Action action)
 		{
 			return !IsActionDown(action);
 		}
+
+		/// <summary>
+		/// Returns false if action name doesn't exist
+		/// </summary>
+		public bool IsActionUp(String action)
+		{
+			Action parsedAction;
+			bool status = Enum.TryParse<Action>(action, out parsedAction);
+
+			if (status)
+				return IsActionUp(parsedAction);
+			else
+				return false;
+		}
+
 
 		public bool IsKeyDown(Keys key)
 		{
