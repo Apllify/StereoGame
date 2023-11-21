@@ -19,6 +19,7 @@ namespace StereoGame.Hitbox
 		//0 : rectangle
 		//1 : circle
 		//2 : convex polygon
+		//3 : triangle
 
 
 
