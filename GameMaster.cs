@@ -25,6 +25,9 @@ namespace StereoGame
 		protected SpriteBatch _spriteBatch;
 		protected RenderTarget2D _renderTarget;
 
+		public Effect ElementShader { get; set; }
+		public Effect ScreenShader { get; set; }
+
 
 		private Dictionary<String, List<Keys>> actionMapping;
 		private Scene currentScene;
@@ -55,6 +58,15 @@ namespace StereoGame
 		{
 			currentScene = newS;
 			currentScene.Load();
+		}
+
+		protected void SetElementShader(Effect newShader)
+		{
+			ElementShader = newShader; 
+		}
+		protected void SetScreenShader(Effect newShader)
+		{
+			ScreenShader= newShader;
 		}
 
 		protected override void Initialize()
@@ -89,9 +101,11 @@ namespace StereoGame
 
 			//virtual rendering
 			GraphicsDevice.SetRenderTarget(_renderTarget);
-			GraphicsDevice.Clear(Color.Turquoise);
+			GraphicsDevice.Clear(Color.Transparent);
 
-			_spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp);
+			_spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.PointClamp,
+							   effect : ElementShader) ;
+
 
 			currentScene.Draw(_spriteBatch);
 
@@ -113,8 +127,10 @@ namespace StereoGame
 
 			//scaling of render target 
 			GraphicsDevice.SetRenderTarget(null);
-			GraphicsDevice.Clear(Color.Black);
-			_spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp);
+			GraphicsDevice.Clear(Color.LightSkyBlue);
+			_spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp,
+							   effect : ScreenShader);
+
 			_spriteBatch.Draw(_renderTarget, drawRec, Color.White);
 			_spriteBatch.End();
 
