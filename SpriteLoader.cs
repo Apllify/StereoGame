@@ -37,6 +37,11 @@ namespace StereoGame
             return sprite;
         }
 
+        public static SpriteFont LoadFont(string fontName)
+        {
+            SpriteFont font = contentManager.Load<SpriteFont>(fontName);
+            return font;
+        }
 
     }
 }
