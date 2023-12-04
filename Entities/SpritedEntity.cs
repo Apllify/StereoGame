@@ -91,21 +91,22 @@ namespace StereoGame.Entities
         {
             Vector2 topLeft;
 
-            if (spriteAnchor == SpriteAnchor.Center)
+            switch (spriteAnchor)
             {
-                topLeft = position - dimensions / 2;
-            }
-            else if (spriteAnchor == SpriteAnchor.TopRight)
-            {
-                topLeft = position - new Vector2(dimensions.X, 0);
-            }
-            else if (spriteAnchor == SpriteAnchor.TopLeft)
-            {
-                topLeft = position;
-            }
-            else
-            {
-                throw new NotImplementedException();
+                case SpriteAnchor.Center:
+                    topLeft = position - dimensions / 2;
+                    break;
+
+                case SpriteAnchor.TopRight:
+                    topLeft = position - new Vector2(dimensions.X, 0);
+                    break;
+
+                case SpriteAnchor.TopLeft:
+                    topLeft = position;
+                    break;
+
+                default:
+                    throw new NotImplementedException();
             }
 
             return topLeft;
@@ -140,7 +141,7 @@ namespace StereoGame.Entities
             position.Y += shiftY;
         }
 
-        public virtual void ShiftPosition(Vector2 shiftVector)
+        public void ShiftPosition(Vector2 shiftVector)
         {
             ShiftPosition(shiftVector.X, shiftVector.Y);
         }
