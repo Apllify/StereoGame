@@ -17,7 +17,8 @@ namespace StereoGame
 		//Static members
 		public static InputHandler CurrentHandler { get; set; }
 
-		//every string represents some action like "move"
+		//every string represents some action like "move up"
+
 
 		public static Vector2 VirtualResolution { get; set; }
 		public static float GameWidth {	get => VirtualResolution.X; }
@@ -149,25 +150,50 @@ namespace StereoGame
 		}
 
 		/// <summary>
-		/// 
+		/// Converts effective screen position into virtual position 
+		/// (whose dimensions are chosen by player)
 		/// </summary>
-		/// <returns>Coordinates of the mouse w.r.t the virtual resolution.</returns>
-		public Vector2 GetMousePos()
+		public Vector2 RealToVirtualPos(Vector2 pos)
 		{
 			Vector2 virtualPos = new();
 
 			float screenWidth = gd.PresentationParameters.BackBufferWidth;
 			float screenHeight = gd.PresentationParameters.BackBufferHeight;
 
-			virtualPos.X = ((float)curMouseState.X / screenWidth)
-						   * VirtualResolution.X;
-			virtualPos.Y = ((float)curMouseState.Y / screenHeight)
+			virtualPos.X = ((float)pos.X / screenWidth)
+			   * VirtualResolution.X;
+			virtualPos.Y = ((float)pos.Y / screenHeight)
 						   * VirtualResolution.Y;
-
-
 
 			return virtualPos;
 
+		}
+
+		/// <summary>
+		/// See <see cref="RealToVirtualPos(Vector2)"/>
+		/// </summary>
+		public Vector2 VirtualToRealPos(Vector2 pos)
+		{
+			Vector2 realPos = new();
+
+			float screenWidth = gd.PresentationParameters.BackBufferWidth;
+			float screenHeight = gd.PresentationParameters.BackBufferHeight;
+
+			realPos.X = ((float)pos.X / VirtualResolution.X)
+			   * screenWidth;
+			realPos.Y = ((float)pos.Y / VirtualResolution.Y)
+						   * screenHeight;
+
+			return realPos;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns>Coordinates of the mouse w.r.t the virtual resolution.</returns>
+		public Vector2 GetMousePos()
+		{
+			return RealToVirtualPos(curMouseState.Position.ToVector2());
 		}
 	}
 }
