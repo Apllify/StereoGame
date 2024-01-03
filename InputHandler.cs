@@ -166,7 +166,6 @@ namespace StereoGame
 						   * VirtualResolution.Y;
 
 			return virtualPos;
-
 		}
 
 		/// <summary>
@@ -185,6 +184,23 @@ namespace StereoGame
 						   * screenHeight;
 
 			return realPos;
+		}
+
+
+		/// <summary>
+		/// Abbreviation for <see cref="RealToVirtualPos(Vector2)"/>
+		/// </summary>
+		public Vector2 RtV(Vector2 pos)
+		{
+			return RealToVirtualPos(pos);
+		}
+
+		/// <summary>
+		/// Abbreviation for <see cref="VirtualToRealPos(Vector2)"/>
+		/// </summary>
+		public Vector2 VtR(Vector2 pos)
+		{
+			return VirtualToRealPos(pos);
 		}
 
 		/// <summary>
