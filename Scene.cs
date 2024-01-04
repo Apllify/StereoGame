@@ -19,6 +19,9 @@ namespace StereoGame
 {
     public class Scene : Entity
 	{
+		private const int DebugHitboxesThickness = 2;
+
+
 		private HashSet<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
@@ -32,11 +35,10 @@ namespace StereoGame
 		}
 
 
-		public bool DebugModeEnabled = true;
+		public bool DebugModeEnabled { get; set; } = true;
 		public bool ShowHitboxes { get; set; } = true;
-		private const int DebugHitboxesThickness = 2;
 
-
+		public float TimeElapsed { get; private set; } = 0f;
 
 
 
@@ -93,6 +95,10 @@ namespace StereoGame
 		}
 
 
+		public float GetTimeElapsed()
+		{
+			return TimeElapsed;
+		}
 
 		public new void RestartScene()
 		{
@@ -172,6 +178,8 @@ namespace StereoGame
 		/// <param name="gameTime">You know what GameTime is already</param>
 		protected sealed override void PostUpdate(GameTime gameTime)
 		{
+			//update timer 
+			TimeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
 			//updating scene entities
 			UpdateAllEntities(gameTime);
