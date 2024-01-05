@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 using MonoGame.Extended;
 using System.Diagnostics;
-using StereoGame.Extensions;
 using StereoGame.Entities;
 
 namespace StereoGame.Particles

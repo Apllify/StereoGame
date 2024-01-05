@@ -84,7 +84,7 @@ namespace StereoGame.UI
 				value.ToString(_format);
 				format = _format;
 			}
-			catch (FormatException e)
+			catch (FormatException)
 			{
 				throw new FormatException("FLabel received invalid float to string format");
 			}

@@ -22,9 +22,9 @@ namespace StereoGame.Entities
             RESTART_SCENE
         }
         public delegate void EntityEventHandler(Entity entity, EntityEvent entityEvent);
-        public event EntityEventHandler entityEventCaller;
+        public event EntityEventHandler EntityEventCaller;
 
-
+        public event Action DeathEvent;
 
         public void Update(GameTime gameTime)
         {
@@ -62,12 +62,13 @@ namespace StereoGame.Entities
 
         protected void SelfDestruct()
         {
-            entityEventCaller?.Invoke(this, EntityEvent.SELF_DESTRUCT);
+            EntityEventCaller?.Invoke(this, EntityEvent.SELF_DESTRUCT);
+            DeathEvent?.Invoke();
         }
 
         protected void RestartScene()
         {
-            entityEventCaller?.Invoke(this, EntityEvent.RESTART_SCENE);
+            EntityEventCaller?.Invoke(this, EntityEvent.RESTART_SCENE);
         }
 
     }

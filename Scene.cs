@@ -71,14 +71,14 @@ namespace StereoGame
 		{
 			if (entity is not null)
 			{
-				entity.entityEventCaller += HandleEntityEvent;
+				entity.EntityEventCaller += HandleEntityEvent;
 				regularEntitiesList.Add(entity);
 			}
 		}
 
 		public void AddCollisionEntity(CollisionEntity entity)
 		{
-			entity.entityEventCaller += HandleEntityEvent;
+			entity.EntityEventCaller += HandleEntityEvent;
 			collisionEntitiesList.Add(entity);
 		}
 
@@ -112,13 +112,16 @@ namespace StereoGame
 
 		// For now, this is only used to handle entities being able to destroy themselves
 		public void HandleEntityEvent(Entity sender, EntityEvent eventType){
-			if (eventType == EntityEvent.SELF_DESTRUCT)
+			switch (eventType)
 			{
-				RemoveEntity(sender);
-			}
-			else if (eventType == EntityEvent.RESTART_SCENE)
-			{
-				RestartScene();
+				case (EntityEvent.SELF_DESTRUCT):
+					RemoveEntity(sender);
+					break;
+
+				case (EntityEvent.RESTART_SCENE):
+					RestartScene();
+					break;
+
 			}
 		}
 

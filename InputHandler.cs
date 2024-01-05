@@ -12,13 +12,16 @@ using System.Threading.Tasks;
 
 namespace StereoGame
 {
+	/// <summary>
+	/// Singleton class 
+	/// </summary>
 	public class InputHandler
 	{
 		//Static members
-		public static InputHandler CurrentHandler { get; set; }
-
-		//every string represents some action like "move up"
-
+		public static InputHandler CurrentHandler { 
+			get => currentHandler; 
+		}
+		private static InputHandler currentHandler;
 
 		public static Vector2 VirtualResolution { get; set; }
 		public static float GameWidth {	get => VirtualResolution.X; }
@@ -27,6 +30,8 @@ namespace StereoGame
 
 		//Non-static members
 		private static Dictionary<String, List<Keys>> actionMapping { get; set; }
+		//every string represents some action like "move up"
+
 
 		private KeyboardState lastState;
 		private KeyboardState curState;
@@ -49,7 +54,7 @@ namespace StereoGame
 
 			//create the input handler instance
 			VirtualResolution = virtualResolution;
-			CurrentHandler = new InputHandler(gd, actionMapping);
+			currentHandler = new InputHandler(gd, actionMapping);
 		}
 
 		public InputHandler(GraphicsDevice _gd, Dictionary<String, List<Keys>> _actionMapping)
