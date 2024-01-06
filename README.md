@@ -14,6 +14,7 @@ a great way to learn about the fundamental mechanisms behind every modern game.
 - Virtual resolution support, a must-have for games with a pixelized or retro aesthetic.  
 - Built-in collision detection between squares, circles, and all convex shapes.
 - A flexible entity system, which provides a very object-oriented way to create game elements.
+- Simple UI tools like auto-wrapping text displays and event-based buttons, to easily create menus.
 - Easy-to-use particle system, with intuitive tools that can create anything from a simple explosion effect,
   to a complex character trail.
   
@@ -21,9 +22,9 @@ And many new features that are still in development. (see [roadmap](#roadmap))
 
 # Roadmap  
 Currently, StereoGame does not support, but has plans to add : 
-+ A UI System (Buttons, Progress Bars, Sliders, etc...).
++ A more fleshed-out UI System (Progress Bars, Sliders, etc...).
 + Concave shape collisions.
-+ Out-of-the-box support for common simple entities (Custom Cursor, Pathfinding enemy, etc...) 
++ Out-of-the-box support for common algorithms (Pathfinding, Raycast Detection, etc...) 
 
 # Open Source
 Any and all contributions to the project are welcome, and I will do my best to 
