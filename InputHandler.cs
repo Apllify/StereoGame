@@ -208,13 +208,28 @@ namespace StereoGame
 			return VirtualToRealPos(pos);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+
 		/// <returns>Coordinates of the mouse w.r.t the virtual resolution.</returns>
 		public Vector2 GetMousePos()
 		{
 			return RealToVirtualPos(curMouseState.Position.ToVector2());
+		}
+
+
+		/// <returns>Whether left click is currently held</returns>
+		public bool IsMouseDown()
+		{
+			return (curMouseState.LeftButton == ButtonState.Pressed);
+		}
+
+		public bool IsMouseUp()
+		{
+			return (curMouseState.LeftButton == ButtonState.Released);
+		}
+
+		public bool IsMouseJustDown()
+		{
+			return (IsMouseDown() && lastMouseState.LeftButton == ButtonState.Released);
 		}
 	}
 }

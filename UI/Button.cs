@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using Microsoft.Xna.Framework.Input;
 
 namespace StereoGame.UI
 {
@@ -16,20 +17,27 @@ namespace StereoGame.UI
 	{
 		public bool IsPressed { get; private set; } = false;
 
-		public event EventHandler<Action> PressedEvent;
-		public event EventHandler<Action> ReleasedEvent;
+		public event Action PressedEvent;
+		public event Action ReleasedEvent;
 
 		public RectangleF Hitbox { get; set; }
 
-		public Button(Vector2 position, RectangleF hitbox, Texture2D texture, SpriteAnchor spriteAnchor):
+		public Button(Vector2 position, Vector2 size, Texture2D texture, SpriteAnchor spriteAnchor):
 			base(position, texture, spriteAnchor)
 		{
-			Hitbox = hitbox;
+			Vector2 tlPos = GetTopLeftPosFromAnchor(Position, size, spriteAnchor);
+			Hitbox = new RectangleF(tlPos, size);
 		}
 
-		public Button(Vector2 position, RectangleF hitbox, Texture2D texture):
-			this(position, hitbox, texture, SpriteAnchor.Center)
+		public Button(Vector2 position, Vector2 size, Texture2D texture):
+			this(position, size, texture, SpriteAnchor.Center)
 		{	}
+
+		public override void ShiftPosition(float shiftX, float shiftY)
+		{
+			base.ShiftPosition(shiftX, shiftY);
+			Hitbox = new RectangleF(Hitbox.X + shiftX, Hitbox.Y + shiftY, Hitbox.Width, Hitbox.Height);
+		}
 
 		protected override void CustomUpdate(Microsoft.Xna.Framework.GameTime gameTime)
 		{
@@ -37,6 +45,21 @@ namespace StereoGame.UI
 
 			//click detection logic
 			Vector2 mousePos = InputHandler.CurrentHandler.GetMousePos();
+
+			if (InputHandler.CurrentHandler.IsMouseJustDown() 
+				&& Hitbox.Contains(mousePos))
+			{
+				PressedEvent?.Invoke();
+				IsPressed = true;
+			}
+			else if (IsPressed && InputHandler.CurrentHandler.IsMouseUp())
+			{
+				ReleasedEvent?.Invoke();
+				IsPressed = false;
+			}
+			
+
+
 		}
 	}
 }

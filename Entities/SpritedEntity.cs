@@ -135,13 +135,20 @@ namespace StereoGame.Entities
             return ActiveDepth - layerIndex * DepthStep;
         }
 
+        /// <summary>
+        /// Move this game object safely by the given offset
+        /// </summary>
         public virtual void ShiftPosition(float shiftX, float shiftY)
         {
             position.X += shiftX;
             position.Y += shiftY;
         }
 
-        public void ShiftPosition(Vector2 shiftVector)
+
+		/// <summary>
+		/// Move this game object safely by the given offset
+		/// </summary>
+		public void ShiftPosition(Vector2 shiftVector)
         {
             ShiftPosition(shiftVector.X, shiftVector.Y);
         }
