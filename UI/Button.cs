@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 
 namespace StereoGame.UI
 {
@@ -16,11 +17,13 @@ namespace StereoGame.UI
 		SpritedEntity
 	{
 		public bool IsPressed { get; private set; } = false;
+		public RectangleF Hitbox { get; set; }
+
+		public Color FlickerColor { get; set; } = Color.LightGray;
 
 		public event Action PressedEvent;
 		public event Action ReleasedEvent;
 
-		public RectangleF Hitbox { get; set; }
 
 		public Button(Vector2 position, Vector2 size, Texture2D texture, SpriteAnchor spriteAnchor):
 			base(position, texture, spriteAnchor)
@@ -49,17 +52,22 @@ namespace StereoGame.UI
 			if (InputHandler.CurrentHandler.IsMouseJustDown() 
 				&& Hitbox.Contains(mousePos))
 			{
+				//call press event
 				PressedEvent?.Invoke();
 				IsPressed = true;
+
 			}
 			else if (IsPressed && InputHandler.CurrentHandler.IsMouseUp())
 			{
+				//call release event
 				ReleasedEvent?.Invoke();
 				IsPressed = false;
 			}
-			
 
-
+			if (IsPressed)
+			{
+				Flicker(FlickerColor, 0.5f);
+			}
 		}
 	}
 }
