@@ -144,11 +144,13 @@ namespace StereoGame.Entities
 
         protected sealed override void PreUpdate(GameTime gameTime)
         {
+            base.PreUpdate(gameTime);
             oldPosition = GetPosition();
         }
 
         protected sealed override void PostUpdate(GameTime gameTime)
         {
+            base.PreUpdate(gameTime);
             lastFrameMovement = GetPosition() - oldPosition;
         }
 

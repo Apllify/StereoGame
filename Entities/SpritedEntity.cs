@@ -9,12 +9,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
+using StereoGame.Extensions;
+
 namespace StereoGame.Entities
 {
     public class SpritedEntity : Entity
     {
         //class members
-        public static Texture2D WhiteRectangle;
+        public static Texture2D WhiteRectangle { get; private set; }
 
         public const float ActiveDepth = 0.5f;
         public const float BackgroundDepth = 1f;
@@ -41,12 +43,20 @@ namespace StereoGame.Entities
         }
         protected SpriteAnchor spriteAnchor;
 
-        protected Color colorMask;
+        public Color ColorMask { get; private set; }
+
+
         protected float scale = 1;
 
         public float LayerDepth { get; protected set; }
 
 
+
+        //helpers for flicker behavior
+        private Color flickerOrigin;
+        private Color flickerTarget;
+        private float flickerProgress = 0;
+        private float flickerSpeed = 0;
 
         public SpritedEntity(Vector2 startingCoords, Texture2D _sprite, SpriteAnchor _spriteAnchor, float _layerDepth)
         {
@@ -59,7 +69,8 @@ namespace StereoGame.Entities
             LayerDepth = _layerDepth;
 
             //default values
-            colorMask = Color.White;
+            ColorMask = Color.White;
+            flickerOrigin = ColorMask;
             scale = 1;
 
             //default tag for all sprited entities
@@ -154,11 +165,54 @@ namespace StereoGame.Entities
         }
 
 
-        public override void Draw(SpriteBatch spriteBatch)
+        /// <summary>
+        /// Safely change the color of this object (flicker
+        /// effects still remain)
+        /// </summary>
+        public void SetColor(Color newColor)
+        {
+            flickerOrigin = newColor;
+            if (flickerProgress <= 0)
+            {
+                ColorMask = flickerOrigin;
+            }
+        }
+
+        /// <summary>
+        /// Make the entity flash to the given color 
+        /// for a specified duration
+        /// </summary>
+        public void Flicker(Color flickerColor, float flickerDuration)
+        {
+            flickerTarget = flickerColor;
+            flickerProgress = 1f;
+            flickerSpeed = 1/flickerDuration;
+        }
+
+
+        /// <summary>
+        /// DO NOT override in any SpritedEntity
+        /// subclasses.
+        /// </summary>
+		protected override void PreUpdate(GameTime gameTime)
+		{
+			//progress our flicker 
+            if (flickerProgress > 0)
+            {
+                ColorMask = Color.Lerp(flickerOrigin, flickerTarget, flickerProgress);
+
+                flickerProgress -= (float)gameTime.ElapsedGameTime.TotalSeconds*
+                                    flickerSpeed;
+            }
+
+
+		}
+
+		public override void Draw(SpriteBatch spriteBatch)
         {
             if (sprite != null)
             {
-                SpriteDraw(spriteBatch, position, sprite, spriteAnchor, LayerDepth, colorMask, scale);
+                SpriteDraw(spriteBatch, position, sprite, spriteAnchor, LayerDepth, ColorMask, scale);
             }
 
         }
