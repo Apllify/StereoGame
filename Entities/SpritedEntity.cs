@@ -196,6 +196,7 @@ namespace StereoGame.Entities
         /// </summary>
 		protected override void PreUpdate(GameTime gameTime)
 		{
+            base.PreUpdate(gameTime);
 			//progress our flicker 
             if (flickerProgress > 0)
             {

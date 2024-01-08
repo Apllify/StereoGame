@@ -25,7 +25,6 @@ namespace StereoGame
 		private HashSet<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
-
 		/// <summary>
 		/// WARNING : performance may be bad.
 		/// </summary>

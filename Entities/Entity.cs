@@ -11,6 +11,8 @@ namespace StereoGame.Entities
 {
     public class Entity
     {
+
+        //object properties
         public string Tag { get; protected set; }
         public float TimeScale { get; private set; } = 1;
         public bool IsVisible { get; set; } = true;
@@ -25,6 +27,10 @@ namespace StereoGame.Entities
         public event EntityEventHandler EntityEventCaller;
 
         public event Action DeathEvent;
+
+        //object fields
+        private bool IsDestroyQueued = false;
+        private bool IsDestroyFrame = false;
 
         public void Update(GameTime gameTime)
         {
@@ -45,7 +51,18 @@ namespace StereoGame.Entities
 
         protected virtual void PostUpdate(GameTime gameTime)
         {
-
+            //check if a self destruct is queued
+            if (IsDestroyQueued)
+            {
+                if (IsDestroyFrame)
+                {
+                    DestroyInstant();
+                }
+                else
+                {
+                    IsDestroyFrame = true;
+                }
+            }
         }
 
 
@@ -60,12 +77,27 @@ namespace StereoGame.Entities
             TimeScale = newTimeScale;
         }
 
-        protected void SelfDestruct()
+        /// <summary>
+        /// Instantly destroys the entity 
+        /// (WARNING : unsafe method, only use if you know what you're doing)
+        /// </summary>
+        public void DestroyInstant()
         {
-            EntityEventCaller?.Invoke(this, EntityEvent.SELF_DESTRUCT);
-            DeathEvent?.Invoke();
+			EntityEventCaller?.Invoke(this, EntityEvent.SELF_DESTRUCT);
+			DeathEvent?.Invoke();
+		}
+
+        /// <summary>
+        /// Queues the entity to be destroyed in the next frame 
+        /// </summary>
+        public void Destroy()
+        {
+            IsDestroyQueued = true;
         }
 
+        /// <summary>
+        /// Restarts the ongoing scene
+        /// </summary>
         protected void RestartScene()
         {
             EntityEventCaller?.Invoke(this, EntityEvent.RESTART_SCENE);
