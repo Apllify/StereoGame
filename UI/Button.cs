@@ -19,14 +19,18 @@ namespace StereoGame.UI
 		public bool IsPressed { get; private set; } = false;
 		public RectangleF Hitbox { get; set; }
 
-		public Color FlickerColor { get; set; } = Color.LightGray;
+
+		public Color HoverColor { get; set; } = Color.LightGray;
+		public Color ClickColor { get; set; } = Color.Gray;
+
+
 
 		public event Action PressedEvent;
 		public event Action ReleasedEvent;
 
 
 		public Button(Vector2 position, Vector2 size, Texture2D texture, SpriteAnchor spriteAnchor):
-			base(position, texture, spriteAnchor)
+			base(position, texture, spriteAnchor, ForegroundDepth)
 		{
 			Vector2 tlPos = GetTopLeftPosFromAnchor(Position, size, spriteAnchor);
 			Hitbox = new RectangleF(tlPos, size);
@@ -64,9 +68,14 @@ namespace StereoGame.UI
 				IsPressed = false;
 			}
 
+			//select the appropriate color
 			if (IsPressed)
 			{
-				Flicker(FlickerColor, 0.5f);
+				Flicker(ClickColor, 0.5f);
+			}
+			else if (Hitbox.Contains(mousePos))
+			{
+				Flicker(HoverColor, 0.1f);
 			}
 		}
 	}

@@ -37,6 +37,8 @@ namespace StereoGame.UI
 		public TextBox(Vector2 topleftPosition, string _textContent, SpriteFont textFont, float maxWidth) :
 			base(topleftPosition, null, SpriteAnchor.TopLeft)
 		{
+			LayerDepth = ForegroundDepth;
+
 			Font = textFont;
 
 			MaxWidth = maxWidth;

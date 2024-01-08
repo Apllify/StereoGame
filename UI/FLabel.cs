@@ -36,6 +36,9 @@ namespace StereoGame.UI
 		public FLabel(Vector2 position, SpriteFont font, ValueGetter _valueGetter, String _format):
 			base(position, "", font, float.PositiveInfinity)
 		{
+			LayerDepth = ForegroundDepth;
+
+
 			Format = _format;
 
 			//request value for first time
