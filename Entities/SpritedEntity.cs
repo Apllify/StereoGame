@@ -30,7 +30,7 @@ namespace StereoGame.Entities
         public Vector2 Position
         {
             get => position;
-            set => ShiftPosition(value - position);
+            set => SetPosition(value);
         }
 
         protected Texture2D sprite;
@@ -132,6 +132,15 @@ namespace StereoGame.Entities
             return position;
         }
 
+
+        /// <summary>
+        /// Converts the new position to a translation, and applies
+        /// that translation to the entity
+        /// </summary>
+        public void SetPosition(Vector2 newPos)
+        {
+            ShiftPosition(newPos - position);
+        }
 
         /// <summary>
         /// Converts an int in [-500, +500] to a depth accepted by sprite batch draw.

@@ -216,6 +216,14 @@ namespace StereoGame
 		}
 
 
+		/// <returns>The mouse movement since the last frame</returns>
+		public Vector2 GetMouseMov()
+		{
+			return RealToVirtualPos(curMouseState.Position.ToVector2() - 
+									lastMouseState.Position.ToVector2());
+		}
+
+
 		/// <returns>Whether left click is currently held</returns>
 		public bool IsMouseDown()
 		{
