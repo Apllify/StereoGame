@@ -18,10 +18,16 @@ namespace StereoGame.UI
 		//properties
 		public Vector2 Origin { get; set; }
 
+
+		private float progress = 0;
 		/// <summary>
 		/// Always between 0 and 1 (inclusive)
 		/// </summary>
-		public float Progress { get; set; } = 0;
+		public float Progress
+		{
+			get => GetProgress(); 
+			set => SetProgress(value);
+		}
 
 		public RectangleF Hitbox { get; set; }
 
@@ -51,6 +57,15 @@ namespace StereoGame.UI
 			this(position, sliderSize, slideLength, texture, SpriteAnchor.Center)
 		{ }
 
+		public float GetProgress()
+		{
+			return progress;
+		}
+		public void SetProgress(float newProg)
+		{
+			progress = Math.Clamp(newProg, 0, 1);
+		}
+
 		public override void ShiftPosition(float shiftX, float shiftY)
 		{
 			base.ShiftPosition(shiftX, shiftY);
@@ -76,12 +91,10 @@ namespace StereoGame.UI
 			//follow mouse or not depending on whether we're being held 
 			if (IsPressed)
 			{
-				Flicker(PressedColor, 0.2f);
+				Flicker(PressedColor, 0.1f);
 
-				//compute new progress percent
 				float progressInc = lastMouseMov.X / SlideLength;
-				float newProgress = Math.Clamp(Progress + progressInc, 0f, 1f);
-				Progress = newProgress;
+				Progress = Progress + progressInc; //clamping done by setter
 
 				//change x position
 				float newX = Origin.X + Progress * SlideLength;
