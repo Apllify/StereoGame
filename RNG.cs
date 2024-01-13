@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using MonoGame.Extended;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
@@ -9,33 +12,41 @@ namespace StereoGame
 {
 	public static class RNG
 	{
-		public static Random currentRNG;
-
-		/// <summary>
-		/// Called by the top level game file before creating 
-		/// any scenes or entities.
-		/// </summary>
-		public static void Initialize()
+		private static Random rng;
+		public static Random Rng
 		{
-			currentRNG = new Random();
+			get => rng ?? (rng = new Random()); 
 		}
-
 
 		/// <param name="min">Inclusive lower bound</param>
 		/// <param name="max">Exclusive upper bound</param>
 		public static int NextInt(int min, int max) 
-			=> currentRNG.Next(min, max);
+			=> Rng.Next(min, max);
 
 		public static double NextDouble()
-			=> currentRNG.NextDouble();
+			=> Rng.NextDouble();
+
+		public static double NextDouble(double max)
+			=> NextDouble() * max;
+
+		public static double NextDouble(double min, double max)
+			=> NextDouble(max-min) + min;
 
 		public static float NextFloat()
-			=> (float)currentRNG.NextDouble();
+			=> (float)Rng.NextDouble();
 
 		public static float NextFloat(float max)
 			=> NextFloat() * max;
 
 		public static float NextFloat(float min, float max)
 			=> NextFloat(max - min) + min;
+
+
+
+		public static Vector2 RandomPos(ref Vector2 topLeft, ref Vector2 bottomRight)
+			=> new Vector2(NextFloat(topLeft.X, bottomRight.X), NextFloat(topLeft.Y, bottomRight.Y));
+
+		public static Vector2 RandomPos(ref RectangleF area)
+			=> new Vector2(NextFloat(area.Left, area.Right), NextFloat(area.Top, area.Bottom));
 	}
 }
