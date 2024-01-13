@@ -84,7 +84,6 @@ namespace StereoGame
 
 			SpriteLoader.InitializeSpriteLoader(Content);
 			InputHandler.Initialize(GraphicsDevice, new Vector2(VW, VH), actionMapping);
-			RNG.Initialize();
 
 			base.LoadContent();
 		}

@@ -22,7 +22,7 @@ namespace StereoGame
 		private const int DebugHitboxesThickness = 2;
 
 
-		private HashSet<Entity> regularEntitiesList;
+		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace StereoGame
 		///</summary>
 		public Scene()
 		{
-			regularEntitiesList = new HashSet<Entity>();
+			regularEntitiesList = new List<Entity>();
 			collisionEntitiesList = new List<CollisionEntity>();
 		}
 
