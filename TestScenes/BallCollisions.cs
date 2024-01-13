@@ -12,23 +12,56 @@ using System.Threading.Tasks;
 using UnfinishedBusinessman;
 using UnfinishedBusinessman.Entities.Characters;
 using StereoGame.Entities;
+using StereoGame.TestScenes;
+using StereoGame;
+using System.Diagnostics;
 
 namespace StereoGame.TestScenes
 {
+	/// <summary>
+	/// Tests the collision engine by spawning 
+	/// a LOT of balls with collisions at once
+	/// </summary>
     public class BallCollisions : Scene
 	{
+		/// <summary>
+		/// Helper class for testing circle collisions
+		/// </summary>
+		private class BouncyBall : CollisionEntity
+		{
+			public static int BallSize = 4;
 
-		private const float dirChangeInterval = 2f;
-		private float dirChangeTimer = 0;
-		private Vector2 windDirection = new Vector2(1, 1).NormalizedCopy();
-		private float windStrength = 70;
+			public static float MinMomentum = 30;
+			public static float MaxMomentum = 50;
 
 
-		const int BallCount = 300;
-		const int BallRadius = 4;
+			private Vector2 momentum;
 
+			public BouncyBall(Vector2 position) :
+				base(position, new CircleHitbox(position.X, position.Y, BallSize), null)
+			{
+				//apply random start momentum
+				float moment_angle = RNG.NextFloat(0, 2 * MathF.PI);
+				float moment_strength = RNG.NextFloat(MinMomentum, MaxMomentum);
 
-		private List<CollisionEntity> ballsList = new();
+				momentum = new Vector2(MathF.Cos(moment_angle) * moment_strength,
+									   MathF.Sin(moment_angle) * moment_strength);
+			}
+
+			protected override void CustomUpdate(GameTime gameTime)
+			{
+				ShiftPosition(momentum * (float)gameTime.ElapsedGameTime.TotalSeconds);
+			}
+
+			public override void OnCollision(CollisionEntity otherEntity)
+			{
+				//randomize direction again
+				momentum *= -1;
+			}
+		}
+
+		const int BallCount = 500;
+
 
 		public BallCollisions():
 			base()
@@ -39,18 +72,12 @@ namespace StereoGame.TestScenes
 		public override void Load()
 		{
 			Texture2D ballSprite = SpriteLoader.LoadTexture2D("Ball");
-			CircleHitbox hitbox = new(0, 0, BallRadius);
+			RectangleF spawnArea = new RectangleF(0, 0, InputHandler.GameWidth, InputHandler.GameHeight);
 
-
-			//create many radius=10 balls in random locations
-			float x, y;
-			for(int i = 0; i<BallCount; i++)
+			//create all of the bouncy balls
+			for (int i = 0; i < BallCount; i++)
 			{
-				(x,  y) = (RNG.NextFloat(InputHandler.GameWidth), 
-						   RNG.NextFloat(InputHandler.GameHeight));
-				CollisionEntity ball = new(new(x, y), hitbox.Shifted(x, y), null);
-				ballsList.Add(ball);
-				AddCollisionEntity(ball);
+				AddCollisionEntity(new BouncyBall(RNG.RandomPos(ref spawnArea)));
 			}
 
 
@@ -73,24 +100,6 @@ namespace StereoGame.TestScenes
 				AddCollisionEntity(current);
 			}
 
-		}
-
-		protected override void CustomUpdate(GameTime gameTime)
-		{
-			//update wind direction if applicable
-			dirChangeTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-			if (dirChangeTimer >= dirChangeInterval)
-			{
-				dirChangeTimer = 0f;
-				windDirection = windDirection.PerpendicularClockwise();
-			}
-
-			//move all balls
-			foreach (CollisionEntity ce in ballsList)
-			{
-				ce.ShiftPosition((float)gameTime.ElapsedGameTime.TotalSeconds * windStrength * windDirection);
-			}
 		}
 	}
 

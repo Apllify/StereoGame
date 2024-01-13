@@ -67,8 +67,7 @@ namespace StereoGame.Hitbox
 			=> 3;
 		public Vector2 GetLastMove()
 		{
-			//TODO : implement this 
-			return Vector2.Zero;
+			return lastMove;
 		}
 
 		public void Shift(float x, float y)
