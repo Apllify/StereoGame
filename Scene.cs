@@ -25,13 +25,8 @@ namespace StereoGame
 		private List<Entity> regularEntitiesList;
 		private List<CollisionEntity> collisionEntitiesList;
 
-		/// <summary>
-		/// WARNING : performance may be bad.
-		/// </summary>
-		public ReadOnlyCollection<CollisionEntity> CollisionEntitiesList
-		{
-			get => collisionEntitiesList.AsReadOnly();
-		}
+		public ReadOnlyCollection<Entity> RegularEntitiesList { get; private set; }
+		public ReadOnlyCollection<CollisionEntity> CollisionEntitiesList { get; private set; }
 
 
 		public bool DebugModeEnabled { get; set; } = true;
@@ -50,6 +45,9 @@ namespace StereoGame
 		{
 			regularEntitiesList = new List<Entity>();
 			collisionEntitiesList = new List<CollisionEntity>();
+
+			RegularEntitiesList = new ReadOnlyCollection<Entity>(regularEntitiesList);
+			CollisionEntitiesList = new ReadOnlyCollection<CollisionEntity>(collisionEntitiesList);
 		}
 
 
