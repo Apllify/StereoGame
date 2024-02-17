@@ -9,39 +9,78 @@ using System.Threading.Tasks;
 
 namespace StereoGame
 {
+
+    /// <summary>
+    /// A thread safe class for loading resources
+    /// </summary>
     public class SpriteLoader
     {
-        public static bool isInitialized = false; 
-        public static ContentManager contentManager;
-        public const string fallbackSprite = "Box";
+        private static object _lock = new object();
+
+
+		public static string fallbackSprite { get; set; } = "Box";
+		public static bool IsInitialized { get; private set; } = false;
+        public static ContentManager ContentManager { get; private set; }
+        
 
         public static void InitializeSpriteLoader(ContentManager _contentManager)
         {
             //save the content manager that allows us to load sprites
-            contentManager = _contentManager;
+            ContentManager = _contentManager;
 
-            isInitialized = true;
+            IsInitialized = true;
         }
 
+
+        /// <summary>
+        /// Warning : unsafe method, use <see cref="LoadTexture2D(string)"/>
+        /// or <see cref="LoadFont(string)"/> instead
+        /// </summary>
         public static T LoadContent<T>(string textureName)
         {
-            return contentManager.Load<T>(textureName);
+            lock (_lock)
+            {
+				if (!IsInitialized)
+				{
+					throw new Exception("SpriteLoader not initialized !");
+				}
 
-        }
+				return ContentManager.Load<T>(textureName);
+
+			}
+
+		}
 
         public static Texture2D LoadTexture2D(string spriteName)
         {
-            Texture2D sprite = contentManager.Load<Texture2D>(spriteName);
-            sprite ??= contentManager.Load<Texture2D>(fallbackSprite);
+            lock (_lock)
+            {
+				if (!IsInitialized)
+				{
+					throw new Exception("SpriteLoader not initialized !");
+				}
 
-            return sprite;
+				Texture2D sprite = ContentManager.Load<Texture2D>(spriteName);
+                //try load default texture if load failed
+				sprite ??= ContentManager.Load<Texture2D>(fallbackSprite);
+
+				return sprite;
+			}
+
         }
 
         public static SpriteFont LoadFont(string fontName)
         {
-            SpriteFont font = contentManager.Load<SpriteFont>(fontName);
-            return font;
-        }
+            lock (_lock)
+            {
+				if (!IsInitialized)
+				{
+					throw new Exception("SpriteLoader not initialized !");
+				}
 
+				SpriteFont font = ContentManager.Load<SpriteFont>(fontName);
+				return font;
+			}
+        }
     }
 }
